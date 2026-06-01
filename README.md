@@ -5,7 +5,7 @@
     <a href="#tech-stack">Tech Stack</a> · 
     <a href="#quick-start">Quick Start</a> · 
     <a href="#structure">Structure</a> · 
-    <a href="#deployment">Deployment</a>,
+    <a href="#deployment">Deployment</a>
   </p>
 </div>
 
