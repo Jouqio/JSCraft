@@ -1,6 +1,6 @@
 // ── Shared domain types for JSCraft ──────────────────────────────────────────
 // Imported by both @jscraft/web and @jscraft/api to ensure type safety
-// across the full stack without duplication.
+// across the full stack without duplication.12
 
 // ── Enums ────────────────────────────────────────────────────────────────────
 export type Role = 'STUDENT' | 'ADMIN';
