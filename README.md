@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>⚡ JSCraft</h1>
+  <h1> JSCraft</h1>
   <p><strong>Platform belajar JavaScript interaktif untuk developer Indonesia</strong></p>
   <p>
     <a href="#tech-stack">Tech Stack</a> · 
@@ -11,22 +11,22 @@
 
 ---
 
-## 🎯 Overview
+##  Overview
 
 JSCraft adalah platform EdTech full-stack untuk belajar JavaScript dari nol sampai siap kerja. Terinspirasi dari freeCodeCamp, Codecademy, dan Scrimba — dengan UI modern dan konten Bahasa Indonesia.
 
 **Features:**
-- 📖 42 hari kurikulum terstruktur (3 fase, 6 minggu)
-- 🖥️ Live code editor (Monaco) dengan sandbox aman
-- ⚡ Sistem XP, level, dan streak gamifikasi
-- 🏆 Kuis interaktif dengan leaderboard
-- 🎯 Latihan dengan test cases
-- 👤 Auth JWT dengan refresh token rotation
-- 🌙 Dark / Light mode
-- 📱 Responsive mobile-first
-- 🔒 Role-based access (Student / Admin)
-- 📜 Verifiable certificates
-- 🤖 AI coding assistant (Claude API)
+-  42 hari kurikulum terstruktur (3 fase, 6 minggu)
+-  Live code editor (Monaco) dengan sandbox aman
+-  Sistem XP, level, dan streak gamifikasi
+-  Kuis interaktif dengan leaderboard
+-  Latihan dengan test cases
+-  Auth JWT dengan refresh token rotation
+-  Dark / Light mode
+-  Responsive mobile-first
+-  Role-based access (Student / Admin)
+-  Verifiable certificates
+-  AI coding assistant (Claude API)
 
 ---
 
@@ -50,7 +50,7 @@ JSCraft adalah platform EdTech full-stack untuk belajar JavaScript dari nol samp
 
 ---
 
-## ⚡ Quick Start
+##  Quick Start
 
 ### Prerequisites
 - Node.js ≥ 20.0.0
@@ -101,9 +101,9 @@ npm run dev
 ```
 
 **URLs:**
-- 🌐 Web: http://localhost:5173
-- ⚙️ API: http://localhost:3000/v1
-- 🔍 Prisma Studio: http://localhost:5555 (run `npm run db:studio`)
+-  Web: http://localhost:5173
+-  API: http://localhost:3000/v1
+-  Prisma Studio: http://localhost:5555 (run `npm run db:studio`)
 
 ### Demo Accounts
 | Role | Email | Password |
@@ -113,7 +113,7 @@ npm run dev
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 jscraft/                      # Turborepo monorepo root
@@ -151,7 +151,7 @@ jscraft/                      # Turborepo monorepo root
 
 ---
 
-## 🗄️ Database Schema
+##  Database Schema
 
 Key models:
 - **User** — auth, XP, level, streak
@@ -167,7 +167,7 @@ Full schema: `apps/api/prisma/schema.prisma`
 
 ---
 
-## 🔌 API Reference
+##  API Reference
 
 Base URL: `http://localhost:3000/v1`
 
@@ -198,7 +198,7 @@ Base URL: `http://localhost:3000/v1`
 
 ---
 
-## 🚀 Deployment
+##  Deployment
 
 ### Frontend → Vercel
 ```bash
@@ -227,9 +227,9 @@ VITE_API_URL=https://api.jscraft.dev/v1
 
 ---
 
-## 🗺️ Development Roadmap
+##  Development Roadmap
 
-### ✅ Phase 1 — Foundation (Current)
+###  Phase 1 — Foundation (Current)
 - [x] Monorepo setup (Turborepo)
 - [x] Full TypeScript frontend + backend
 - [x] Authentication (JWT + refresh rotation)
@@ -244,7 +244,7 @@ VITE_API_URL=https://api.jscraft.dev/v1
 - [x] Admin panel foundation
 - [x] CI/CD (GitHub Actions)
 
-### 🔄 Phase 2 — Full Curriculum
+###  Phase 2 — Full Curriculum
 - [ ] Migrate all 42 lessons from bootcamp repo
 - [ ] Exercise test runner (isolated-vm)
 - [ ] Email verification + reset password flow
@@ -253,7 +253,7 @@ VITE_API_URL=https://api.jscraft.dev/v1
 - [ ] Notes system per lesson
 - [ ] Bookmarks
 
-### 🔮 Phase 3 — AI + Community
+###  Phase 3 — AI + Community
 - [ ] AI coding assistant (Claude API, streaming)
 - [ ] AI code review
 - [ ] Community comments per lesson
@@ -263,7 +263,7 @@ VITE_API_URL=https://api.jscraft.dev/v1
 
 ---
 
-## 🔐 Security
+##  Security
 
 - Passwords: bcrypt (cost 12)
 - JWT: opaque refresh token in httpOnly cookie; signed access token (15min)
@@ -277,8 +277,6 @@ VITE_API_URL=https://api.jscraft.dev/v1
 
 ---
 
-## 📄 License
+##  License
 
-MIT © 2025 JSCraft Team
-
-Built with ❤️ untuk developer Indonesia.
+MIT © 2026 JSCraft 
