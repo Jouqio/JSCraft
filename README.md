@@ -31,7 +31,7 @@
 JSCraft adalah platform EdTech full-stack untuk belajar JavaScript — dari nol sampai siap kerja. Terinspirasi dari freeCodeCamp, Codecademy, dan Scrimba, dengan UI modern dan konten dalam **Bahasa Indonesia**.
 
 <div align="center">
-  <img src="docs/images/dashboard.png" alt="JSCraft Dashboard" width="100%" />
+  <!--<img src="docs/images/dashboard.png" alt="JSCraft Dashboard" width="100%" />-->
   <p><em>Dashboard dengan progress tracker, XP system, dan streak calendar</em></p>
 </div>
 
@@ -45,9 +45,9 @@ JSCraft adalah platform EdTech full-stack untuk belajar JavaScript — dari nol 
 | AI coding assistant (Claude) | Dashboard progress visual | Responsive mobile-first |
 
 <div align="center">
-  <img src="docs/images/editor.png" alt="Monaco Editor" width="49%" />
-  <img src="docs/images/quiz.png" alt="Quiz System" width="49%" />
-  <p><em>Live code editor (Monaco) &nbsp;·&nbsp; Sistem kuis interaktif</em></p>
+  <!--<img src="docs/images/editor.png" alt="Monaco Editor" width="49%" />
+  <img src="docs/images/quiz.png" alt="Quiz System" width="49%" />>-->
+  <p><em>Live code editor (Monaco)1 &nbsp;·&nbsp; Sistem kuis interaktif</em></p>
 </div>
 
 ---
