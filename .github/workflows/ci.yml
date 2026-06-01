@@ -12,7 +12,7 @@ env:
   TURBO_TEAM:  ${{ secrets.TURBO_TEAM }}
 
 jobs:
-  # ── Lint & Typecheck ─────────────────────────────────────1
+  # ── Lint & Typecheck ─────────────────────────────────────
   quality:
     name: Quality Check
     runs-on: ubuntu-latest
