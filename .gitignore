@@ -9,7 +9,7 @@ build/
 .next/
 out/
 
-# Environment files — NEVER commit these
+# Environment files — NEVER commit these 122
 .env
 .env.local
 .env.*.local
