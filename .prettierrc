@@ -8,3 +8,4 @@
   "bracketSpacing": true,
   "plugins": ["prettier-plugin-tailwindcss"]
 }
+// ── Prettier configuration for JSCraft ─────────────────────────────────────────
