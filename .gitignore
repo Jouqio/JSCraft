@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Environment files — NEVER commit these
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Turborepo
+.turbo/
+
+# Logs
+*.log
+npm-debug.log*
+lerna-debug.log*
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Prisma generated
+prisma/migrations/dev.db
+*.db-journal

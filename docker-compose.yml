@@ -1,0 +1,52 @@
+# JSCraft — Local Development Services
+# Usage: docker compose up -d
+
+version: '3.9'
+
+services:
+  # ── PostgreSQL ────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: jscraft_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     jscraft
+      POSTGRES_PASSWORD: jscraft_dev_password
+      POSTGRES_DB:       jscraft_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U jscraft -d jscraft_db']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis ────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: jscraft_redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # ── MailHog (local email testing) ─────────────────────────
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: jscraft_mailhog
+    ports:
+      - '1025:1025'  # SMTP
+      - '8025:8025'  # Web UI → http://localhost:8025
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:

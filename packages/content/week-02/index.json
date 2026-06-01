@@ -1,0 +1,44 @@
+{
+  "week": 2,
+  "phase": 1,
+  "title": "Array, Object & String Methods",
+  "titleId": "Array, Object & String Methods",
+  "courseSlug": "arrays-and-objects",
+  "lessons": [
+    {
+      "day": 8,
+      "slug": "array-dasar",
+      "title": "Array Dasar"
+    },
+    {
+      "day": 9,
+      "slug": "array-methods",
+      "title": "Array Methods"
+    },
+    {
+      "day": 10,
+      "slug": "string-methods",
+      "title": "String Methods"
+    },
+    {
+      "day": 11,
+      "slug": "object-dasar",
+      "title": "Object Dasar"
+    },
+    {
+      "day": 12,
+      "slug": "destructuring",
+      "title": "Destructuring"
+    },
+    {
+      "day": 13,
+      "slug": "spread-rest",
+      "title": "Spread & Rest"
+    },
+    {
+      "day": 14,
+      "slug": "proyek-todo-list",
+      "title": "Proyek: Todo List"
+    }
+  ]
+}

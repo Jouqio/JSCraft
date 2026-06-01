@@ -1,0 +1,39 @@
+name: Deploy — Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          DATABASE_URL:       ${{ secrets.DATABASE_URL }}
+          JWT_ACCESS_SECRET:  ${{ secrets.JWT_ACCESS_SECRET }}
+          JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
+          FRONTEND_URL:       ${{ secrets.FRONTEND_URL }}
+          VITE_API_URL:       ${{ secrets.VITE_API_URL }}
+
+      - name: Deploy API to Railway
+        run: echo "Railway deployment via Railway CLI or GitHub integration"
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Deploy Web to Vercel
+        run: echo "Vercel deployment via Vercel GitHub integration"

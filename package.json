@@ -1,0 +1,32 @@
+{
+  "name": "jscraft",
+  "version": "1.0.0",
+  "private": true,
+  "description": "JSCraft — JavaScript Learning Platform Monorepo",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\" --ignore-path .gitignore",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "db:generate": "turbo run db:generate",
+    "db:push": "turbo run db:push",
+    "db:migrate": "turbo run db:migrate",
+    "db:seed": "turbo run db:seed",
+    "db:studio": "cd apps/api && npx prisma studio"
+  },
+  "devDependencies": {
+    "turbo": "^2.1.2",
+    "prettier": "^3.3.2",
+    "typescript": "^5.5.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "packageManager": "npm@10.8.1"
+}

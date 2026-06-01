@@ -1,0 +1,44 @@
+{
+  "week": 1,
+  "phase": 1,
+  "title": "Fondasi JavaScript",
+  "titleId": "Fondasi JavaScript",
+  "courseSlug": "javascript-fundamentals",
+  "lessons": [
+    {
+      "day": 1,
+      "slug": "hello-world",
+      "title": "Hello World"
+    },
+    {
+      "day": 2,
+      "slug": "variabel-dan-tipe-data",
+      "title": "Variabel & Tipe Data"
+    },
+    {
+      "day": 3,
+      "slug": "operator-dan-ekspresi",
+      "title": "Operator & Ekspresi"
+    },
+    {
+      "day": 4,
+      "slug": "kontrol-alur",
+      "title": "Kontrol Alur"
+    },
+    {
+      "day": 5,
+      "slug": "perulangan",
+      "title": "Perulangan (Loop)"
+    },
+    {
+      "day": 6,
+      "slug": "fungsi",
+      "title": "Fungsi"
+    },
+    {
+      "day": 7,
+      "slug": "proyek-kalkulator",
+      "title": "Proyek: Kalkulator"
+    }
+  ]
+}

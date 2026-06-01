@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f59e0b" />
+
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Primary SEO -->
+    <title>JSCraft — Belajar JavaScript dari Nol ke Siap Kerja</title>
+    <meta name="description" content="Platform interaktif belajar JavaScript: live code editor, kuis, gamifikasi XP, dan 42 hari kurikulum terstruktur. Gratis selamanya." />
+    <meta name="keywords" content="belajar javascript, javascript indonesia, kursus javascript gratis, coding indonesia" />
+    <link rel="canonical" href="https://jscraft.dev" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://jscraft.dev" />
+    <meta property="og:title" content="JSCraft — Belajar JavaScript dari Nol ke Siap Kerja" />
+    <meta property="og:description" content="42 hari belajar JavaScript secara interaktif dengan live editor, kuis, dan sistem XP gamifikasi." />
+    <meta property="og:image" content="https://jscraft.dev/og-image.png" />
+    <meta property="og:locale" content="id_ID" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@jscraftdev" />
+    <meta name="twitter:title" content="JSCraft — Belajar JavaScript Interaktif" />
+    <meta name="twitter:description" content="42 hari kurikulum JavaScript dari nol sampai siap kerja." />
+    <meta name="twitter:image" content="https://jscraft.dev/og-image.png" />
+
+    <!-- Structured Data: Course -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Course",
+      "name": "Bootcamp JavaScript 42 Hari",
+      "description": "Kursus JavaScript interaktif dari nol sampai siap kerja dalam 42 hari terstruktur",
+      "url": "https://jscraft.dev/courses",
+      "provider": {
+        "@type": "Organization",
+        "name": "JSCraft",
+        "url": "https://jscraft.dev",
+        "logo": "https://jscraft.dev/logo.png"
+      },
+      "courseMode": "online",
+      "inLanguage": "id-ID",
+      "isAccessibleForFree": true,
+      "numberOfCredits": 42
+    }
+    </script>
+
+    <!-- Theme initialization script — runs before React to prevent flash -->
+    <script>
+      (function() {
+        var theme = localStorage.getItem('jscraft-theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (theme === 'dark' || (!theme && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+  </head>
+  <body class="font-body antialiased bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-x-hidden">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
