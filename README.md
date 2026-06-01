@@ -30,7 +30,7 @@ JSCraft adalah platform EdTech full-stack untuk belajar JavaScript dari nol samp
 
 ---
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
