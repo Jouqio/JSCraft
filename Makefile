@@ -1,6 +1,6 @@
 .PHONY: help dev build lint typecheck test clean db-up db-down db-reset seed studio
 
-help: ## Show this helps
+help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-18s\033[0m %s\n", $$1, $$2}'
 
 # ── Development ───────────────────────────────────────────────
