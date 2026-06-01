@@ -1,4 +1,4 @@
-# JSCraft — Local Development Servicess
+# JSCraft — Local Development Services
 # Usage: docker compose up -d
 
 version: '3.9'
