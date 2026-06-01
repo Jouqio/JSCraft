@@ -28,4 +28,3 @@
     "db:seed": { "cache": false }
   }
 }
-// ── Turbo configuration for JSCraft monorepo ─────────────────────────────────────────
