@@ -9,7 +9,11 @@ build/
 .next/
 out/
 
+<<<<<<< HEAD
 # Environment files — NEVER commit these 
+=======
+# Environment files — NEVER commit these
+>>>>>>> cb8a3af (update)
 .env
 .env.local
 .env.*.local

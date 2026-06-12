@@ -8,4 +8,7 @@
   },
   "exclude": ["node_modules"]
 }
+<<<<<<< HEAD
 // ── TypeScript configuration for JSCraft monorepo ─────────────────────────────────────────
+=======
+>>>>>>> cb8a3af (update)

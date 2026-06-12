@@ -8,7 +8,11 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
+<<<<<<< HEAD
     "lint": "echo lint skipped",
+=======
+    "lint": "eslint . --max-warnings 0",
+>>>>>>> cb8a3af (update)
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist .turbo",
     "db:generate": "prisma generate",

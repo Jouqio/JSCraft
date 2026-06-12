@@ -12,8 +12,13 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
+<<<<<<< HEAD
     "noUnusedLocals": false,
     "noUnusedParameters": false,
+=======
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+>>>>>>> cb8a3af (update)
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
