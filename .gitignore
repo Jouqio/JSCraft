@@ -11,8 +11,7 @@ out/
 
 # Environment files — NEVER commit these 
 .env
-.env.local
-.env.*.local
+.env.*
 !.env.example
 
 # Turborepo
