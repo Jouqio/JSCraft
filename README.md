@@ -366,4 +366,6 @@ Contributions are welcome! Silakan buka issue terlebih dahulu untuk mendiskusika
 
 ## License
 
-MIT © 2026 [Jouqio](https://github.com/Jouqio)
+## License
+
+[MIT](LICENSE) © 2026 [Jouqio](https://github.com/Jouqio)
