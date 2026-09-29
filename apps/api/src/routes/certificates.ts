@@ -23,14 +23,16 @@ router.get('/:code', async (req, res, next) => {
     res.json({
       success: true,
       data: {
-        username:    cert.user.username,
+        username: cert.user.username,
         displayName: cert.user.displayName,
-        courseSlug:  cert.courseSlug,
-        issuedAt:    cert.issuedAt.toISOString(),
-        verifyCode:  cert.verifyCode,
+        courseSlug: cert.courseSlug,
+        issuedAt: cert.issuedAt.toISOString(),
+        verifyCode: cert.verifyCode,
       },
     });
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 });
 
 export default router;

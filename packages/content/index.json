@@ -3,28 +3,19 @@
     {
       "phase": 1,
       "title": "Fondasi JavaScript",
-      "weeks": [
-        1,
-        2
-      ],
+      "weeks": [1, 2],
       "days": "1-14"
     },
     {
       "phase": 2,
       "title": "JavaScript Menengah",
-      "weeks": [
-        3,
-        4
-      ],
+      "weeks": [3, 4],
       "days": "15-28"
     },
     {
       "phase": 3,
       "title": "JavaScript Modern",
-      "weeks": [
-        5,
-        6
-      ],
+      "weeks": [5, 6],
       "days": "29-42"
     }
   ]

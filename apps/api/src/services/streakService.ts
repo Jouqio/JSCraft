@@ -19,9 +19,7 @@ export const streakService = {
     let newStreak = user.streakCurrent;
 
     if (lastActive) {
-      const daysDiff = Math.floor(
-        (now.getTime() - lastActive.getTime()) / (1000 * 60 * 60 * 24)
-      );
+      const daysDiff = Math.floor((now.getTime() - lastActive.getTime()) / (1000 * 60 * 60 * 24));
 
       if (daysDiff === 0) {
         // Already active today — no change
@@ -30,8 +28,8 @@ export const streakService = {
         newStreak = user.streakCurrent + 1;
 
         // Award streak milestone XP
-        if (newStreak === 3)  bonusXP = XP_REWARDS.streak_3_days;
-        if (newStreak === 7)  bonusXP = XP_REWARDS.streak_7_days;
+        if (newStreak === 3) bonusXP = XP_REWARDS.streak_3_days;
+        if (newStreak === 7) bonusXP = XP_REWARDS.streak_7_days;
         if (newStreak === 14) bonusXP = XP_REWARDS.streak_14_days;
         if (newStreak === 30) bonusXP = XP_REWARDS.streak_30_days;
       } else {

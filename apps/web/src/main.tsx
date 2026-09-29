@@ -35,7 +35,7 @@ ReactDOM.createRoot(rootElement).render(
             boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
           },
           success: { iconTheme: { primary: '#f59e0b', secondary: '#fff' } },
-          error:   { iconTheme: { primary: '#ef4444', secondary: '#fff' } },
+          error: { iconTheme: { primary: '#ef4444', secondary: '#fff' } },
         }}
       />
     </HelmetProvider>

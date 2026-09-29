@@ -3,7 +3,9 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@store/authStore';
 import { PageSpinner } from '@components/ui/Spinner';
 
-interface Props { children: ReactNode; }
+interface Props {
+  children: ReactNode;
+}
 
 export default function ProtectedRoute({ children }: Props) {
   const { isAuthenticated, isHydrating } = useAuthStore();

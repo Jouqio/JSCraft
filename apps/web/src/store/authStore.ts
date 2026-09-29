@@ -17,19 +17,19 @@ interface AuthState {
   isAuthenticated: boolean;
   isHydrating: boolean;
 
-  login:         (email: string, password: string) => Promise<void>;
-  register:      (data: RegisterPayload) => Promise<void>;
-  logout:        () => Promise<void>;
-  refreshToken:  () => Promise<boolean>;
-  updateUser:    (patch: Partial<User>) => void;
-  addXP:         (amount: number) => void;
+  login: (email: string, password: string) => Promise<void>;
+  register: (data: RegisterPayload) => Promise<void>;
+  logout: () => Promise<void>;
+  refreshToken: () => Promise<boolean>;
+  updateUser: (patch: Partial<User>) => void;
+  addXP: (amount: number) => void;
   hydrateComplete: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
   devtools(
     persist(
-      (set, get) => ({
+      (set, _get) => ({
         user: null,
         accessToken: null,
         isAuthenticated: false,
@@ -38,22 +38,29 @@ export const useAuthStore = create<AuthState>()(
         hydrateComplete: () => set({ isHydrating: false }),
 
         login: async (email, password) => {
-          const { data } = await api.post<{ user: User; accessToken: string }>(
-            '/auth/login', { email, password }
-          );
+          const { data } = await api.post<{ user: User; accessToken: string }>('/auth/login', {
+            email,
+            password,
+          });
           set({ user: data.user, accessToken: data.accessToken, isAuthenticated: true });
         },
 
         register: async (payload) => {
           const { data } = await api.post<{ user: User; accessToken: string }>(
-            '/auth/register', payload
+            '/auth/register',
+            payload
           );
           set({ user: data.user, accessToken: data.accessToken, isAuthenticated: true });
         },
 
         logout: async () => {
-          try { await api.post('/auth/logout'); } catch { /* ignore */ }
-          finally { set({ user: null, accessToken: null, isAuthenticated: false }); }
+          try {
+            await api.post('/auth/logout');
+          } catch {
+            /* ignore */
+          } finally {
+            set({ user: null, accessToken: null, isAuthenticated: false });
+          }
         },
 
         refreshToken: async () => {
@@ -67,8 +74,7 @@ export const useAuthStore = create<AuthState>()(
           }
         },
 
-        updateUser: (patch) =>
-          set((s) => ({ user: s.user ? { ...s.user, ...patch } : null })),
+        updateUser: (patch) => set((s) => ({ user: s.user ? { ...s.user, ...patch } : null })),
 
         addXP: (amount) =>
           set((s) => {
@@ -81,8 +87,8 @@ export const useAuthStore = create<AuthState>()(
       {
         name: 'jscraft-auth',
         partialize: (s) => ({
-          user:            s.user,
-          accessToken:     s.accessToken,
+          user: s.user,
+          accessToken: s.accessToken,
           isAuthenticated: s.isAuthenticated,
         }),
         onRehydrateStorage: () => (state) => {

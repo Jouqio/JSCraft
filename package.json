@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "description": "JSCraft — JavaScript Learning Platform Monorepo",
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
@@ -16,6 +19,7 @@
     "db:generate": "turbo run db:generate",
     "db:push": "turbo run db:push",
     "db:migrate": "turbo run db:migrate",
+    "db:deploy": "turbo run db:deploy",
     "db:seed": "turbo run db:seed",
     "db:studio": "cd apps/api && npx prisma studio"
   },

@@ -15,11 +15,11 @@ export function formatRelative(dateStr: string): string {
   const diffHr = Math.floor(diffMin / 60);
   const diffDay = Math.floor(diffHr / 24);
 
-  if (diffMin < 1)   return 'baru saja';
-  if (diffMin < 60)  return `${diffMin} menit lalu`;
-  if (diffHr < 24)   return `${diffHr} jam lalu`;
-  if (diffDay < 7)   return `${diffDay} hari lalu`;
-  if (diffDay < 30)  return `${Math.floor(diffDay / 7)} minggu lalu`;
+  if (diffMin < 1) return 'baru saja';
+  if (diffMin < 60) return `${diffMin} menit lalu`;
+  if (diffHr < 24) return `${diffHr} jam lalu`;
+  if (diffDay < 7) return `${diffDay} hari lalu`;
+  if (diffDay < 30) return `${Math.floor(diffDay / 7)} minggu lalu`;
   return `${Math.floor(diffDay / 30)} bulan lalu`;
 }
 

@@ -29,14 +29,14 @@ export function useProgress() {
   );
 
   return {
-    progress:      store.progress,
-    streak:        store.streak,
-    isSyncing:     store.isSyncing,
+    progress: store.progress,
+    streak: store.streak,
+    isSyncing: store.isSyncing,
     getStatus,
     isCompleted,
     courseProgress,
     completeLesson: store.completeLesson,
-    startLesson:    store.startLesson,
+    startLesson: store.startLesson,
     completedCount: store.getCompletedCount(),
   };
 }

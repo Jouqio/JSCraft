@@ -1,22 +1,21 @@
 import { cn } from '@lib/utils';
 
-interface SpinnerProps { size?: 'sm' | 'md' | 'lg'; className?: string; }
+interface SpinnerProps {
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
+}
 
 export function Spinner({ size = 'md', className }: SpinnerProps) {
   const sizes = { sm: 'w-4 h-4', md: 'w-6 h-6', lg: 'w-10 h-10' };
   return (
     <svg
-      className={cn('animate-spin text-brand-500', sizes[size], className)}
+      className={cn('text-brand-500 animate-spin', sizes[size], className)}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
       aria-label="Loading"
     >
-      <circle
-        className="opacity-25"
-        cx="12" cy="12" r="10"
-        stroke="currentColor" strokeWidth="4"
-      />
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
       <path
         className="opacity-75"
         fill="currentColor"
@@ -28,10 +27,10 @@ export function Spinner({ size = 'md', className }: SpinnerProps) {
 
 export function PageSpinner() {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-white dark:bg-slate-950 z-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-slate-950">
       <div className="flex flex-col items-center gap-3">
         <Spinner size="lg" />
-        <p className="text-sm font-medium text-slate-500 dark:text-slate-400 font-mono">
+        <p className="font-mono text-sm font-medium text-slate-500 dark:text-slate-400">
           Loading JSCraft…
         </p>
       </div>

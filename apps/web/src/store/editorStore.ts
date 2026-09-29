@@ -40,8 +40,7 @@ export const useEditorStore = create<EditorState>()(
 
       setLanguage: (language) => set({ language }),
 
-      setStarterCode: (starterCode) =>
-        set({ starterCode, code: starterCode }),
+      setStarterCode: (starterCode) => set({ starterCode, code: starterCode }),
 
       clearOutput: () => set({ output: [], hasError: false }),
 
@@ -104,18 +103,23 @@ export const useEditorStore = create<EditorState>()(
           }
         };
 
+        let timeout: ReturnType<typeof setTimeout>;
+
         const cleanup = () => {
+          clearTimeout(timeout);
           window.removeEventListener('message', handleMessage);
           if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
         };
 
         // Timeout after 5 seconds
-        const timeout = setTimeout(() => {
+        timeout = setTimeout(() => {
           if (!settled) {
             settled = true;
             cleanup();
             set({
-              output: [{ type: 'error', args: ['Execution timed out (5s)'], timestamp: Date.now() }],
+              output: [
+                { type: 'error', args: ['Execution timed out (5s)'], timestamp: Date.now() },
+              ],
               hasError: true,
               isRunning: false,
             });
@@ -154,11 +158,6 @@ export const useEditorStore = create<EditorState>()(
 <\/script></body></html>`;
 
         document.body.appendChild(iframe);
-
-        // Clear timeout ref if not needed
-        const origCleanup = cleanup;
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const _timeoutRef = timeout;
       },
     }),
     { name: 'EditorStore' }

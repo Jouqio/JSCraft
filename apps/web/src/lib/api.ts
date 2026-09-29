@@ -2,7 +2,7 @@ import axios, {
   type AxiosInstance,
   type InternalAxiosRequestConfig,
   type AxiosResponse,
-  AxiosError,
+  type AxiosError,
 } from 'axios';
 
 const BASE_URL = (import.meta.env['VITE_API_URL'] as string | undefined) ?? '/v1';
@@ -25,8 +25,8 @@ export function registerAuthStore(
   refreshFn: () => Promise<boolean>,
   getNewToken: () => string | null
 ) {
-  _getToken    = getToken;
-  _refreshFn   = refreshFn;
+  _getToken = getToken;
+  _refreshFn = refreshFn;
   _getNewToken = getNewToken;
 }
 
@@ -66,11 +66,11 @@ api.interceptors.response.use(
       });
     }
 
-    cfg._retry   = true;
+    cfg._retry = true;
     isRefreshing = true;
 
     try {
-      const ok    = await _refreshFn();
+      const ok = await _refreshFn();
       const token = _getNewToken?.() ?? null;
       isRefreshing = false;
       drain(null, token);
@@ -88,7 +88,9 @@ api.interceptors.response.use(
 );
 
 // ── Typed helpers ─────────────────────────────────────────────
-export const apiGet   = <T>(url: string) => api.get<T>(url).then((r) => r.data);
-export const apiPost  = <T>(url: string, data?: unknown) => api.post<T>(url, data).then((r) => r.data);
-export const apiPatch = <T>(url: string, data?: unknown) => api.patch<T>(url, data).then((r) => r.data);
-export const apiDel   = <T>(url: string) => api.delete<T>(url).then((r) => r.data);
+export const apiGet = <T>(url: string) => api.get<T>(url).then((r) => r.data);
+export const apiPost = <T>(url: string, data?: unknown) =>
+  api.post<T>(url, data).then((r) => r.data);
+export const apiPatch = <T>(url: string, data?: unknown) =>
+  api.patch<T>(url, data).then((r) => r.data);
+export const apiDel = <T>(url: string) => api.delete<T>(url).then((r) => r.data);

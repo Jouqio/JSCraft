@@ -10,7 +10,7 @@ export interface AuthenticatedRequest extends Request {
 }
 
 interface JWTPayload {
-  sub: string;   // user id
+  sub: string; // user id
   role: 'STUDENT' | 'ADMIN';
   iat: number;
   exp: number;
@@ -50,7 +50,7 @@ export const authenticate = async (
     }
 
     // Attach to request
-    (req as AuthenticatedRequest).userId   = user.id;
+    (req as AuthenticatedRequest).userId = user.id;
     (req as AuthenticatedRequest).userRole = user.role;
     next();
   } catch (err) {
@@ -58,11 +58,7 @@ export const authenticate = async (
   }
 };
 
-export const requireAdmin = (
-  req: Request,
-  _res: Response,
-  next: NextFunction
-): void => {
+export const requireAdmin = (req: Request, _res: Response, next: NextFunction): void => {
   const { userRole } = req as AuthenticatedRequest;
   if (userRole !== 'ADMIN') {
     next(new AppError(403, 'FORBIDDEN', 'Akses ditolak. Hanya admin.'));

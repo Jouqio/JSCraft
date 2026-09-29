@@ -46,8 +46,8 @@ export default defineConfig({
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
           'ui-vendor': ['framer-motion', 'lucide-react'],
-          'editor': ['@monaco-editor/react'],
-          'state': ['zustand'],
+          editor: ['@monaco-editor/react'],
+          state: ['zustand'],
         },
       },
     },
