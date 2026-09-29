@@ -25,6 +25,7 @@ const envSchema = z.object({
   BCRYPT_ROUNDS: z.coerce.number().default(12),
   RATE_LIMIT_WINDOW_MS: z.coerce.number().default(15 * 60 * 1000),
   RATE_LIMIT_MAX: z.coerce.number().default(100),
+  ENABLE_CRON: z.enum(['true', 'false']).default('true').transform((v) => v === 'true'),
 });
 
 const parsed = envSchema.safeParse(process.env);

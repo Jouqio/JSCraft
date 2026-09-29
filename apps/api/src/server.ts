@@ -87,14 +87,19 @@ app.use(errorHandler);
 
 // ── Cron jobs ────────────────────────────────────────────────
 // Midnight WIB (UTC+7 = 17:00 UTC) — reset broken streaks
-cron.schedule('0 17 * * *', async () => {
-  try {
-    const count = await streakService.resetExpiredStreaks();
-    if (count > 0) console.log(`[cron] Reset ${count} expired streaks`);
-  } catch (err) {
-    console.error('[cron] streak reset failed:', err);
-  }
-});
+if (env.ENABLE_CRON) {
+  cron.schedule('0 17 * * *', async () => {
+    try {
+      const count = await streakService.resetExpiredStreaks();
+      if (count > 0) console.log(`[cron] Reset ${count} expired streaks`);
+    } catch (err) {
+      console.error('[cron] streak reset failed:', err);
+    }
+  });
+  console.log('[cron] Streak reset job scheduled (17:00 UTC / 00:00 WIB)');
+} else {
+  console.log('[cron] Cron jobs disabled via ENABLE_CRON=false');
+}
 
 // ── Startup ─────────────────────────────────────────────────
 async function main() {
