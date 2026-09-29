@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Code2, ArrowLeft, CheckCircle } from 'lucide-react';
+import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 import { Button } from '@components/ui/Button';
@@ -28,34 +28,56 @@ export default function ForgotPasswordPage() {
 
   return (
     <>
-      <Helmet><title>Lupa Password — JSCraft</title></Helmet>
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-4">
+      <Helmet>
+        <title>Lupa Password — JSCraft</title>
+      </Helmet>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4 dark:bg-slate-950">
         <div className="w-full max-w-sm">
-          <Link to="/login" className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 mb-8 transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Kembali ke Login
+          <Link
+            to="/login"
+            className="mb-8 flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-slate-700 dark:hover:text-slate-300"
+          >
+            <ArrowLeft className="h-4 w-4" /> Kembali ke Login
           </Link>
           <div className="card p-8">
-            <div className="w-12 h-12 rounded-xl bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center mb-6">
-              {sent ? <CheckCircle className="w-6 h-6 text-emerald-500" /> : <Mail className="w-6 h-6 text-brand-600 dark:text-brand-400" />}
+            <div className="bg-brand-100 dark:bg-brand-900/30 mb-6 flex h-12 w-12 items-center justify-center rounded-xl">
+              {sent ? (
+                <CheckCircle className="h-6 w-6 text-emerald-500" />
+              ) : (
+                <Mail className="text-brand-600 dark:text-brand-400 h-6 w-6" />
+              )}
             </div>
             {sent ? (
               <>
-                <h1 className="font-heading text-xl font-bold text-slate-900 dark:text-white mb-2">Email terkirim!</h1>
+                <h1 className="font-heading mb-2 text-xl font-bold text-slate-900 dark:text-white">
+                  Email terkirim!
+                </h1>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Cek inbox <strong>{email}</strong> untuk link reset password. Jika tidak ada, cek folder spam.
+                  Cek inbox <strong>{email}</strong> untuk link reset password. Jika tidak ada, cek
+                  folder spam.
                 </p>
               </>
             ) : (
               <>
-                <h1 className="font-heading text-xl font-bold text-slate-900 dark:text-white mb-1">Lupa Password</h1>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
+                <h1 className="font-heading mb-1 text-xl font-bold text-slate-900 dark:text-white">
+                  Lupa Password
+                </h1>
+                <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
                   Masukkan email akunmu dan kami akan kirimkan link untuk reset password.
                 </p>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  <Input label="Email" type="email" placeholder="nama@email.com" value={email}
+                  <Input
+                    label="Email"
+                    type="email"
+                    placeholder="nama@email.com"
+                    value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    leftAddon={<Mail className="w-4 h-4" />} fullWidth />
-                  <Button type="submit" loading={loading} fullWidth>Kirim Link Reset</Button>
+                    leftAddon={<Mail className="h-4 w-4" />}
+                    fullWidth
+                  />
+                  <Button type="submit" loading={loading} fullWidth>
+                    Kirim Link Reset
+                  </Button>
                 </form>
               </>
             )}
