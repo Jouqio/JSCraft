@@ -26,7 +26,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
         <div className="relative flex items-center">
           {leftAddon && (
-            <div className="absolute left-3 flex items-center text-slate-400 pointer-events-none">
+            <div className="pointer-events-none absolute left-3 flex items-center text-slate-400">
               {leftAddon}
             </div>
           )}
@@ -34,34 +34,30 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={cn(
-              'block rounded-xl border bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100',
+              'block rounded-xl border bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100',
               'placeholder:text-slate-400 dark:placeholder:text-slate-500',
               'transition-colors duration-150',
-              'focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent',
+              'focus:ring-brand-500 focus:border-transparent focus:outline-none focus:ring-2',
               error
-                ? 'border-red-400 dark:border-red-500 focus:ring-red-400'
-                : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600',
-              leftAddon  ? 'pl-10' : 'pl-4',
+                ? 'border-red-400 focus:ring-red-400 dark:border-red-500'
+                : 'border-slate-300 hover:border-slate-400 dark:border-slate-700 dark:hover:border-slate-600',
+              leftAddon ? 'pl-10' : 'pl-4',
               rightAddon ? 'pr-10' : 'pr-4',
-              'py-2.5 text-sm w-full',
+              'w-full py-2.5 text-sm',
               className
             )}
             {...props}
           />
           {rightAddon && (
-            <div className="absolute right-3 flex items-center text-slate-400">
-              {rightAddon}
-            </div>
+            <div className="absolute right-3 flex items-center text-slate-400">{rightAddon}</div>
           )}
         </div>
         {error && (
-          <p className="text-xs text-red-500 dark:text-red-400 flex items-center gap-1">
+          <p className="flex items-center gap-1 text-xs text-red-500 dark:text-red-400">
             <span>⚠</span> {error}
           </p>
         )}
-        {hint && !error && (
-          <p className="text-xs text-slate-500 dark:text-slate-400">{hint}</p>
-        )}
+        {hint && !error && <p className="text-xs text-slate-500 dark:text-slate-400">{hint}</p>}
       </div>
     );
   }

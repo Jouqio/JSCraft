@@ -28,7 +28,7 @@
 
 ## Overview
 
-JSCraft adalah platform EdTech full-stack untuk belajar JavaScript — dari nol sampai siap kerja. Terinspirasi dari freeCodeCamp, Codecademy, dan Scrimba, dengan UI modern dan konten dalam **Bahasa Indonesia**.
+JSCraft adalah platform EdTech full-stack untuk belajar JavaScript dari nol sampai siap kerja. Terinspirasi dari freeCodeCamp, Codecademy, dan Scrimba, dengan UI modern dan konten dalam **Bahasa Indonesia**.
 
 <div align="center">
   <!--<img src="docs/images/dashboard.png" alt="JSCraft Dashboard" width="100%" />-->
@@ -37,12 +37,12 @@ JSCraft adalah platform EdTech full-stack untuk belajar JavaScript — dari nol 
 
 ### Features
 
-| Belajar | Gamifikasi | Platform |
-|---------|-----------|---------|
-| 42 hari kurikulum terstruktur | Sistem XP, level & streak | Auth JWT + refresh token rotation |
-| Live code editor (Monaco) | Kuis interaktif + leaderboard | Role-based access (Student / Admin) |
-| Latihan dengan test cases | Verifiable certificates | Dark / Light mode |
-| AI coding assistant (Claude) | Dashboard progress visual | Responsive mobile-first |
+| Belajar                       | Gamifikasi                    | Platform                            |
+| ----------------------------- | ----------------------------- | ----------------------------------- |
+| 42 hari kurikulum terstruktur | Sistem XP, level & streak     | Auth JWT + refresh token rotation   |
+| Live code editor (Monaco)     | Kuis interaktif + leaderboard | Role-based access (Student / Admin) |
+| Latihan dengan test cases     | Verifiable certificates       | Dark / Light mode                   |
+| AI coding assistant (Claude)  | Dashboard progress visual     | Responsive mobile-first             |
 
 <div align="center">
   <!--<img src="docs/images/editor.png" alt="Monaco Editor" width="49%" />
@@ -54,21 +54,21 @@ JSCraft adalah platform EdTech full-stack untuk belajar JavaScript — dari nol 
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| **Frontend** | React 18, Vite 5, TypeScript 5 |
-| **Styling** | Tailwind CSS v3 + custom design tokens |
-| **State** | Zustand v4 (persist + devtools) |
-| **Animation** | Framer Motion |
-| **Editor** | Monaco Editor (VS Code engine) |
-| **Routing** | React Router v6 |
-| **Backend** | Node.js 20, Express 4, TypeScript |
-| **Database** | PostgreSQL + Prisma ORM |
-| **Auth** | JWT — RS256 access token + opaque refresh (httpOnly cookie) |
-| **Email** | Nodemailer (Resend / SMTP) |
-| **AI** | Anthropic Claude API |
-| **Monorepo** | Turborepo + npm workspaces |
-| **CI/CD** | GitHub Actions → Vercel (web) + Railway (API) |
+| Layer         | Technology                                                  |
+| ------------- | ----------------------------------------------------------- |
+| **Frontend**  | React 18, Vite 5, TypeScript 5                              |
+| **Styling**   | Tailwind CSS v3 + custom design tokens                      |
+| **State**     | Zustand v4 (persist + devtools)                             |
+| **Animation** | Framer Motion                                               |
+| **Editor**    | Monaco Editor (VS Code engine)                              |
+| **Routing**   | React Router v6                                             |
+| **Backend**   | Node.js 20, Express 4, TypeScript                           |
+| **Database**  | PostgreSQL + Prisma ORM                                     |
+| **Auth**      | JWT — RS256 access token + opaque refresh (httpOnly cookie) |
+| **Email**     | Nodemailer (Resend / SMTP)                                  |
+| **AI**        | Anthropic Claude API                                        |
+| **Monorepo**  | Turborepo + npm workspaces                                  |
+| **CI/CD**     | GitHub Actions → Vercel (web) + Railway (API)               |
 
 ---
 
@@ -129,20 +129,20 @@ npm run db:seed        # Membuat demo users + konten Week 1
 npm run dev
 ```
 
-| Service | URL |
-|---------|-----|
-| Web | http://localhost:5173 |
-| API | http://localhost:3000/v1 |
-| Prisma Studio | http://localhost:5555 |
+| Service       | URL                      |
+| ------------- | ------------------------ |
+| Web           | http://localhost:5173    |
+| API           | http://localhost:3000/v1 |
+| Prisma Studio | http://localhost:5555    |
 
 > Jalankan `npm run db:studio` untuk membuka Prisma Studio.
 
 ### Demo Accounts
 
-| Role | Email | Password |
-|------|-------|---------|
-| Admin | admin@jscraft.dev | `Admin@123456` |
-| Student | budi@example.com | `Student@123` |
+| Role    | Email             | Password       |
+| ------- | ----------------- | -------------- |
+| Admin   | admin@jscraft.dev | `Admin@123456` |
+| Student | budi@example.com  | `Student@123`  |
 
 ---
 
@@ -194,16 +194,16 @@ jscraft/                          # Turborepo monorepo root
 
 Key models in `apps/api/prisma/schema.prisma`:
 
-| Model | Description |
-|-------|-------------|
-| `User` | Auth, XP, level, streak |
-| `Course` → `Lesson` | Content as JSON, starterCode, solutionCode |
-| `Progress` | Per user/lesson, unique constraint |
-| `Quiz` → `Question` → `QuizAttempt` | Graded answers |
-| `Exercise` | Test cases + submissions |
-| `Achievement` → `UserAchievement` | Many-to-many |
-| `Session` | Refresh token store, rotated on each use |
-| `Certificate` | Verifiable via unique code |
+| Model                               | Description                                |
+| ----------------------------------- | ------------------------------------------ |
+| `User`                              | Auth, XP, level, streak                    |
+| `Course` → `Lesson`                 | Content as JSON, starterCode, solutionCode |
+| `Progress`                          | Per user/lesson, unique constraint         |
+| `Quiz` → `Question` → `QuizAttempt` | Graded answers                             |
+| `Exercise`                          | Test cases + submissions                   |
+| `Achievement` → `UserAchievement`   | Many-to-many                               |
+| `Session`                           | Refresh token store, rotated on each use   |
+| `Certificate`                       | Verifiable via unique code                 |
 
 ---
 
@@ -214,54 +214,54 @@ Key models in `apps/api/prisma/schema.prisma`:
 <details>
 <summary><strong>Auth</strong></summary>
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| `POST` | `/auth/register` | — | Register + set refresh cookie |
-| `POST` | `/auth/login` | — | Login + set refresh cookie |
-| `POST` | `/auth/refresh` | cookie | Rotate refresh token |
-| `POST` | `/auth/logout` | cookie | Revoke session |
-| `GET` | `/auth/me` | Bearer | Current user |
+| Method | Endpoint         | Auth   | Description                   |
+| ------ | ---------------- | ------ | ----------------------------- |
+| `POST` | `/auth/register` | —      | Register + set refresh cookie |
+| `POST` | `/auth/login`    | —      | Login + set refresh cookie    |
+| `POST` | `/auth/refresh`  | cookie | Rotate refresh token          |
+| `POST` | `/auth/logout`   | cookie | Revoke session                |
+| `GET`  | `/auth/me`       | Bearer | Current user                  |
 
 </details>
 
 <details>
 <summary><strong>Courses & Progress</strong></summary>
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| `GET` | `/courses` | optional | All published courses |
-| `GET` | `/courses/:slug` | optional | Course with lessons |
-| `GET` | `/courses/:slug/lessons/:id` | optional | Lesson + quiz + exercises |
-| `POST` | `/progress/:lessonId/start` | Bearer | Mark in-progress |
-| `POST` | `/progress/:lessonId/complete` | Bearer | Mark complete + award XP |
-| `GET` | `/progress` | Bearer | Full progress map |
-| `GET` | `/progress/streak` | Bearer | Streak info |
+| Method | Endpoint                       | Auth     | Description               |
+| ------ | ------------------------------ | -------- | ------------------------- |
+| `GET`  | `/courses`                     | optional | All published courses     |
+| `GET`  | `/courses/:slug`               | optional | Course with lessons       |
+| `GET`  | `/courses/:slug/lessons/:id`   | optional | Lesson + quiz + exercises |
+| `POST` | `/progress/:lessonId/start`    | Bearer   | Mark in-progress          |
+| `POST` | `/progress/:lessonId/complete` | Bearer   | Mark complete + award XP  |
+| `GET`  | `/progress`                    | Bearer   | Full progress map         |
+| `GET`  | `/progress/streak`             | Bearer   | Streak info               |
 
 </details>
 
 <details>
 <summary><strong>Quiz, Profile & AI</strong></summary>
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| `GET` | `/quiz/:lessonId` | Bearer | Quiz (answers hidden) |
-| `POST` | `/quiz/:id/attempt` | Bearer | Submit + grade answers |
-| `GET` | `/quiz/leaderboard` | — | Top 50 by XP |
-| `GET` | `/profile/:username` | optional | Public profile |
-| `PATCH` | `/profile` | Bearer | Update own profile |
-| `POST` | `/ai/hint` | Bearer | AI hint / explain / review |
+| Method  | Endpoint             | Auth     | Description                |
+| ------- | -------------------- | -------- | -------------------------- |
+| `GET`   | `/quiz/:lessonId`    | Bearer   | Quiz (answers hidden)      |
+| `POST`  | `/quiz/:id/attempt`  | Bearer   | Submit + grade answers     |
+| `GET`   | `/quiz/leaderboard`  | —        | Top 50 by XP               |
+| `GET`   | `/profile/:username` | optional | Public profile             |
+| `PATCH` | `/profile`           | Bearer   | Update own profile         |
+| `POST`  | `/ai/hint`           | Bearer   | AI hint / explain / review |
 
 </details>
 
 <details>
 <summary><strong>Admin</strong></summary>
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| `GET` | `/admin/stats` | Admin | Platform stats |
-| `GET` | `/admin/users` | Admin | Paginated user list |
-| `POST` | `/admin/courses` | Admin | Create course |
-| `POST` | `/admin/lessons` | Admin | Create lesson |
+| Method | Endpoint         | Auth  | Description         |
+| ------ | ---------------- | ----- | ------------------- |
+| `GET`  | `/admin/stats`   | Admin | Platform stats      |
+| `GET`  | `/admin/users`   | Admin | Paginated user list |
+| `POST` | `/admin/courses` | Admin | Create course       |
+| `POST` | `/admin/lessons` | Admin | Create lesson       |
 
 </details>
 

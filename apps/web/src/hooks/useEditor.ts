@@ -4,15 +4,17 @@ import { useEditorStore } from '@store/editorStore';
 /** Convenience hook for code editor with keyboard shortcut binding */
 export function useEditor(starterCode?: string) {
   const store = useEditorStore();
+  const setStarterCode = useEditorStore((s) => s.setStarterCode);
+  const runCode = useEditorStore((s) => s.runCode);
 
   // Initialise starter code when provided
   useEffect(() => {
     if (starterCode !== undefined) {
-      store.setStarterCode(starterCode);
+      setStarterCode(starterCode);
     }
-  }, [starterCode]);
+  }, [starterCode, setStarterCode]);
 
-  const runWithShortcut = useCallback(() => store.runCode(), [store]);
+  const runWithShortcut = useCallback(() => runCode(), [runCode]);
 
   // Ctrl/Cmd + Enter global shortcut
   useEffect(() => {
@@ -27,16 +29,16 @@ export function useEditor(starterCode?: string) {
   }, [runWithShortcut]);
 
   return {
-    code:       store.code,
-    language:   store.language,
-    output:     store.output,
-    hasError:   store.hasError,
-    isRunning:  store.isRunning,
-    runCount:   store.runCount,
-    setCode:    store.setCode,
-    setLanguage:store.setLanguage,
-    runCode:    store.runCode,
-    resetCode:  store.resetCode,
-    clearOutput:store.clearOutput,
+    code: store.code,
+    language: store.language,
+    output: store.output,
+    hasError: store.hasError,
+    isRunning: store.isRunning,
+    runCount: store.runCount,
+    setCode: store.setCode,
+    setLanguage: store.setLanguage,
+    runCode: store.runCode,
+    resetCode: store.resetCode,
+    clearOutput: store.clearOutput,
   };
 }

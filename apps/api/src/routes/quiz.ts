@@ -9,7 +9,7 @@ import { AppError } from '../middleware/errorHandler.js';
 const router = Router();
 
 const submitSchema = z.object({
-  answers:   z.array(z.object({ questionId: z.string(), selectedOptionId: z.string() })),
+  answers: z.array(z.object({ questionId: z.string(), selectedOptionId: z.string() })),
   timeTaken: z.number().int().positive().optional(),
 });
 
@@ -20,11 +20,21 @@ router.get('/leaderboard', async (_req, res, next) => {
       where: { isActive: true },
       orderBy: { xpTotal: 'desc' },
       take: 50,
-      select: { id: true, username: true, displayName: true, avatarUrl: true, xpTotal: true, level: true, streakCurrent: true },
+      select: {
+        id: true,
+        username: true,
+        displayName: true,
+        avatarUrl: true,
+        xpTotal: true,
+        level: true,
+        streakCurrent: true,
+      },
     });
-    const data = users.map((u: typeof users[0], i: number) => ({ rank: i + 1, ...u }));
+    const data = users.map((u: (typeof users)[0], i: number) => ({ rank: i + 1, ...u }));
     res.json({ success: true, data });
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 });
 
 // GET /v1/quiz/:lessonId
@@ -35,7 +45,11 @@ router.get('/:lessonId', authenticate, async (req, res, next) => {
       include: {
         questions: {
           orderBy: { order: 'asc' },
-          select: { id: true, text: true, type: true, order: true,
+          select: {
+            id: true,
+            text: true,
+            type: true,
+            order: true,
             options: true, // isCorrect stripped below
           },
         },
@@ -45,14 +59,18 @@ router.get('/:lessonId', authenticate, async (req, res, next) => {
 
     const sanitized = {
       ...quiz,
-      questions: quiz.questions.map((q: typeof quiz.questions[0]) => ({
+      questions: quiz.questions.map((q: (typeof quiz.questions)[0]) => ({
         ...q,
-        options: (q.options as any[]).map(({ isCorrect: _ic, ...opt }: { isCorrect: boolean; id: string; text: string }) => opt),
+        options: (q.options as any[]).map(
+          ({ isCorrect: _ic, ...opt }: { isCorrect: boolean; id: string; text: string }) => opt
+        ),
       })),
     };
 
     res.json({ success: true, data: sanitized });
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 });
 
 // POST /v1/quiz/:id/attempt
@@ -72,10 +90,14 @@ router.post('/:id/attempt', authenticate, validateBody(submitSchema), async (req
     // Grade answers
     let correctCount = 0;
     for (const answer of answers) {
-      const question = quiz.questions.find((q: (typeof quiz.questions)[0]) => q.id === answer.questionId);
+      const question = quiz.questions.find(
+        (q: (typeof quiz.questions)[0]) => q.id === answer.questionId
+      );
       if (!question) continue;
       const options = question.options as Array<{ id: string; isCorrect: boolean }>;
-      const selected = options.find((o: { id: string; isCorrect: boolean }) => o.id === answer.selectedOptionId);
+      const selected = options.find(
+        (o: { id: string; isCorrect: boolean }) => o.id === answer.selectedOptionId
+      );
       if (selected?.isCorrect) correctCount++;
     }
 
@@ -84,7 +106,7 @@ router.post('/:id/attempt', authenticate, validateBody(submitSchema), async (req
     const isPerfect = score === 100;
 
     let xpEarned = 0;
-    if (passed)    xpEarned += XP_REWARDS.quiz_pass;
+    if (passed) xpEarned += XP_REWARDS.quiz_pass;
     if (isPerfect) xpEarned += XP_REWARDS.quiz_perfect - XP_REWARDS.quiz_pass; // additive
 
     if (xpEarned > 0) await xpService.awardXP(userId, xpEarned);
@@ -95,9 +117,19 @@ router.post('/:id/attempt', authenticate, validateBody(submitSchema), async (req
 
     res.json({
       success: true,
-      data: { score, passed, xpEarned, correctCount, totalCount: quiz.questions.length, timeTaken, attemptId: attempt.id },
+      data: {
+        score,
+        passed,
+        xpEarned,
+        correctCount,
+        totalCount: quiz.questions.length,
+        timeTaken,
+        attemptId: attempt.id,
+      },
     });
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 });
 
 export default router;

@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "description": "JSCraft — JavaScript Learning Platform Monorepo",
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",

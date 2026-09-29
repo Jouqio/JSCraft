@@ -42,8 +42,12 @@ export const progressService = {
       await prisma.progress.upsert({
         where: { userId_lessonId: { userId, lessonId } },
         create: {
-          userId, lessonId, courseId: lesson.courseId,
-          status: 'COMPLETED', completedAt: new Date(), xpEarned,
+          userId,
+          lessonId,
+          courseId: lesson.courseId,
+          status: 'COMPLETED',
+          completedAt: new Date(),
+          xpEarned,
         },
         update: { status: 'COMPLETED', completedAt: new Date(), xpEarned },
       });
@@ -68,13 +72,18 @@ export const progressService = {
     const progressList = await prisma.progress.findMany({
       where: { userId },
       select: {
-        lessonId: true, courseId: true, status: true,
-        completedAt: true, xpEarned: true,
+        lessonId: true,
+        courseId: true,
+        status: true,
+        completedAt: true,
+        xpEarned: true,
       },
     });
 
     const map: Record<string, (typeof progressList)[0]> = {};
-    progressList.forEach((p: typeof progressList[0]) => { map[p.lessonId] = p; });
+    progressList.forEach((p: (typeof progressList)[0]) => {
+      map[p.lessonId] = p;
+    });
 
     const streak = await streakService.getStreakInfo(userId);
 

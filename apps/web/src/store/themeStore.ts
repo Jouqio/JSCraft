@@ -37,8 +37,7 @@ export const useThemeStore = create<ThemeState>()(
       name: 'jscraft-theme',
       onRehydrateStorage: () => (state) => {
         if (state) {
-          const resolved =
-            state.theme === 'system' ? getSystemTheme() : state.theme;
+          const resolved = state.theme === 'system' ? getSystemTheme() : state.theme;
           applyTheme(resolved);
           state.resolvedTheme = resolved;
         }
@@ -49,10 +48,8 @@ export const useThemeStore = create<ThemeState>()(
 
 // Listen for system theme changes when in 'system' mode
 if (typeof window !== 'undefined') {
-  window
-    .matchMedia('(prefers-color-scheme: dark)')
-    .addEventListener('change', () => {
-      const { theme, setTheme } = useThemeStore.getState();
-      if (theme === 'system') setTheme('system');
-    });
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    const { theme, setTheme } = useThemeStore.getState();
+    if (theme === 'system') setTheme('system');
+  });
 }

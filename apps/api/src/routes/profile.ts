@@ -13,8 +13,15 @@ router.get('/:username', optionalAuth, async (req, res, next) => {
     const user = await prisma.user.findUnique({
       where: { username: req.params.username },
       select: {
-        id: true, username: true, displayName: true, avatarUrl: true,
-        xpTotal: true, level: true, streakCurrent: true, streakMax: true, createdAt: true,
+        id: true,
+        username: true,
+        displayName: true,
+        avatarUrl: true,
+        xpTotal: true,
+        level: true,
+        streakCurrent: true,
+        streakMax: true,
+        createdAt: true,
         achievements: {
           include: { achievement: true },
           orderBy: { earnedAt: 'desc' },
@@ -25,23 +32,42 @@ router.get('/:username', optionalAuth, async (req, res, next) => {
     });
     if (!user) throw new AppError(404, 'NOT_FOUND', 'Profil tidak ditemukan');
     res.json({ success: true, data: user });
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 });
 
 // PATCH /v1/profile — update own profile
-router.patch('/', authenticate, validateBody(z.object({
-  displayName: z.string().min(2).max(50).optional(),
-  avatarUrl:   z.string().url().optional(),
-})), async (req, res, next) => {
-  try {
-    const user = await prisma.user.update({
-      where: { id: (req as any).userId },
-      data: req.body,
-      select: { id: true, username: true, displayName: true, avatarUrl: true, email: true, xpTotal: true, level: true },
-    });
-    res.json({ success: true, data: { user } });
-  } catch (err) { next(err); }
-});
+router.patch(
+  '/',
+  authenticate,
+  validateBody(
+    z.object({
+      displayName: z.string().min(2).max(50).optional(),
+      avatarUrl: z.string().url().optional(),
+    })
+  ),
+  async (req, res, next) => {
+    try {
+      const user = await prisma.user.update({
+        where: { id: (req as any).userId },
+        data: req.body,
+        select: {
+          id: true,
+          username: true,
+          displayName: true,
+          avatarUrl: true,
+          email: true,
+          xpTotal: true,
+          level: true,
+        },
+      });
+      res.json({ success: true, data: { user } });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 // GET /v1/profile/achievements (own)
 router.get('/me/achievements', authenticate, async (req, res, next) => {
@@ -51,10 +77,14 @@ router.get('/me/achievements', authenticate, async (req, res, next) => {
       where: { userId: (req as any).userId },
       select: { achievementId: true, earnedAt: true },
     });
-    const earnedMap = Object.fromEntries(earned.map((e: { achievementId: string; earnedAt: Date }) => [e.achievementId, e.earnedAt]));
-    const data = all.map((a: typeof all[0]) => ({ ...a, earnedAt: earnedMap[a.id] ?? null }));
+    const earnedMap = Object.fromEntries(
+      earned.map((e: { achievementId: string; earnedAt: Date }) => [e.achievementId, e.earnedAt])
+    );
+    const data = all.map((a: (typeof all)[0]) => ({ ...a, earnedAt: earnedMap[a.id] ?? null }));
     res.json({ success: true, data });
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 });
 
 export default router;

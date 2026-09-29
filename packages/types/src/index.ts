@@ -59,6 +59,8 @@ export interface Lesson {
   starterCode: string | null;
   solutionCode?: string | null; // hidden from students
   isPublished: boolean;
+  exercises?: Exercise[];
+  quiz?: Quiz | null;
 }
 
 export interface LessonContent {

@@ -12,7 +12,7 @@ export default function StreakCalendar({ completedDates, days = 35 }: StreakCale
     d.setDate(today.getDate() - (days - 1 - i));
     const dateStr = d.toISOString().split('T')[0]!;
     const isToday = i === days - 1;
-    const done    = completedDates.includes(dateStr);
+    const done = completedDates.includes(dateStr);
     return { dateStr, isToday, done };
   });
 
@@ -25,13 +25,16 @@ export default function StreakCalendar({ completedDates, days = 35 }: StreakCale
       {weeks.map((week, wi) => (
         <div key={wi} className="flex gap-1">
           {week.map(({ dateStr, isToday, done }) => (
-            <div key={dateStr}
+            <div
+              key={dateStr}
               title={dateStr}
               className={cn(
-                'w-5 h-5 rounded-sm transition-colors',
+                'h-5 w-5 rounded-sm transition-colors',
                 done ? 'bg-brand-500' : 'bg-slate-100 dark:bg-slate-800',
-                isToday && done && 'ring-2 ring-brand-300 ring-offset-1 dark:ring-offset-slate-900',
-                isToday && !done && 'ring-2 ring-slate-300 dark:ring-slate-600 ring-offset-1 dark:ring-offset-slate-900',
+                isToday && done && 'ring-brand-300 ring-2 ring-offset-1 dark:ring-offset-slate-900',
+                isToday &&
+                  !done &&
+                  'ring-2 ring-slate-300 ring-offset-1 dark:ring-slate-600 dark:ring-offset-slate-900'
               )}
             />
           ))}
@@ -40,7 +43,7 @@ export default function StreakCalendar({ completedDates, days = 35 }: StreakCale
       <div className="flex items-center gap-2 pt-1">
         <span className="text-2xs text-slate-400">Kurang</span>
         {[0.2, 0.4, 0.7, 1].map((o) => (
-          <div key={o} className="w-3.5 h-3.5 rounded-sm bg-brand-500" style={{ opacity: o }} />
+          <div key={o} className="bg-brand-500 h-3.5 w-3.5 rounded-sm" style={{ opacity: o }} />
         ))}
         <span className="text-2xs text-slate-400">Lebih</span>
       </div>

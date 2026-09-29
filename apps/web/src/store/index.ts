@@ -1,4 +1,4 @@
-export { useAuthStore }     from './authStore';
+export { useAuthStore } from './authStore';
 export { useProgressStore } from './progressStore';
-export { useEditorStore }   from './editorStore';
-export { useThemeStore }    from './themeStore';
+export { useEditorStore } from './editorStore';
+export { useThemeStore } from './themeStore';

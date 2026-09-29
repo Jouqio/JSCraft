@@ -5,9 +5,7 @@ const transporter = nodemailer.createTransport({
   host: env.SMTP_HOST,
   port: env.SMTP_PORT,
   secure: env.SMTP_PORT === 465,
-  auth: env.SMTP_USER
-    ? { user: env.SMTP_USER, pass: env.SMTP_PASS }
-    : undefined,
+  auth: env.SMTP_USER ? { user: env.SMTP_USER, pass: env.SMTP_PASS } : undefined,
 });
 
 interface MailOptions {
@@ -24,7 +22,9 @@ export const emailService = {
     }
     await transporter.sendMail({
       from: env.SMTP_FROM ?? 'noreply@jscraft.dev',
-      to, subject, html,
+      to,
+      subject,
+      html,
     });
   },
 
