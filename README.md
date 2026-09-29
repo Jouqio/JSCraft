@@ -116,10 +116,9 @@ node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ### 4. Database Setup
 
 ```bash
-cd apps/api
-
-npx prisma migrate dev --name init
-npx prisma generate
+# Jalankan setup database dari root project
+npm run db:deploy      # Menerapkan migrasi database ke PostgreSQL
+npm run db:generate    # Generate Prisma Client
 npm run db:seed        # Membuat demo users + konten Week 1
 ```
 
@@ -270,13 +269,16 @@ Key models in `apps/api/prisma/schema.prisma`:
 
 ## Deployment
 
+> **Catatan Alur CI/CD:** Keputusan otomatisasi workflow deployment final di `.github/workflows/deploy.yml` sedang ditinjau pada audit Fase 1 (Butir H). Berikut panduan manual/platform integration yang valid:
+
 ### Frontend → Vercel
 
 ```bash
 # Connect GitHub repo ke Vercel, lalu set environment variable:
 VITE_API_URL=https://api.jscraft.dev/v1
 
-# Build command:  npm run build --filter=@jscraft/web
+# Build command:  npx turbo run build --filter=@jscraft/web
+# Atau:           npm run build -w @jscraft/web
 # Output dir:     apps/web/dist
 ```
 
@@ -285,7 +287,8 @@ VITE_API_URL=https://api.jscraft.dev/v1
 ```bash
 # Connect GitHub repo ke Railway
 # Set semua env vars dari apps/api/.env.example
-# Railway otomatis menjalankan: npm run start --filter=@jscraft/api
+# Pre-deploy / Release command: npx prisma migrate deploy
+# Start command:                npm run start -w @jscraft/api
 ```
 
 ### Database → Railway PostgreSQL
@@ -293,8 +296,7 @@ VITE_API_URL=https://api.jscraft.dev/v1
 ```bash
 # Tambahkan PostgreSQL plugin di Railway
 # Salin DATABASE_URL ke env vars API service
-# Prisma migrations berjalan otomatis via:
-# RAILWAY_RUN_UID=0 npx prisma migrate deploy
+# Migrasi schema otomatis berjalan via release command di atas (prisma migrate deploy)
 ```
 
 ---
