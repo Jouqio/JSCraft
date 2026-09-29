@@ -3,7 +3,9 @@ import { Play } from 'lucide-react';
 import { useEditorStore } from '@store/editorStore';
 import { Button } from '@components/ui/Button';
 
-interface RunButtonProps { className?: string; }
+interface RunButtonProps {
+  className?: string;
+}
 
 export default function RunButton({ className }: RunButtonProps) {
   const { runCode, isRunning } = useEditorStore();
@@ -16,9 +18,13 @@ export default function RunButton({ className }: RunButtonProps) {
   }, [runCode]);
 
   return (
-    <Button size="sm" onClick={runCode} loading={isRunning}
-      leftIcon={!isRunning ? <Play className="w-3.5 h-3.5" /> : undefined}
-      className={className}>
+    <Button
+      size="sm"
+      onClick={runCode}
+      loading={isRunning}
+      leftIcon={!isRunning ? <Play className="h-3.5 w-3.5" /> : undefined}
+      className={className}
+    >
       Run
     </Button>
   );

@@ -26,7 +26,7 @@ export default function RootLayout() {
   }, [pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       {!isBareRoute && <Navbar />}
       <main className={isBareRoute ? '' : 'flex-1'}>
         <Outlet />

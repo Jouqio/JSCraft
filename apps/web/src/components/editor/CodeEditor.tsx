@@ -31,20 +31,20 @@ export default function CodeEditor({
       base: 'vs-dark',
       inherit: true,
       rules: [
-        { token: 'comment',    foreground: '546e7a', fontStyle: 'italic' },
-        { token: 'keyword',    foreground: 'c792ea' },
-        { token: 'string',     foreground: 'c3e88d' },
-        { token: 'number',     foreground: 'f78c6c' },
+        { token: 'comment', foreground: '546e7a', fontStyle: 'italic' },
+        { token: 'keyword', foreground: 'c792ea' },
+        { token: 'string', foreground: 'c3e88d' },
+        { token: 'number', foreground: 'f78c6c' },
         { token: 'identifier', foreground: '82aaff' },
-        { token: 'type',       foreground: 'ffcb6b' },
+        { token: 'type', foreground: 'ffcb6b' },
       ],
       colors: {
-        'editor.background':          '#0f172a',
-        'editor.foreground':          '#e2e8f0',
+        'editor.background': '#0f172a',
+        'editor.foreground': '#e2e8f0',
         'editor.lineHighlightBackground': '#1e293b80',
-        'editorCursor.foreground':    '#f59e0b',
+        'editorCursor.foreground': '#f59e0b',
         'editor.selectionBackground': '#f59e0b30',
-        'editorLineNumber.foreground':'#475569',
+        'editorLineNumber.foreground': '#475569',
         'editorLineNumber.activeForeground': '#94a3b8',
         'editor.inactiveSelectionBackground': '#f59e0b18',
       },
@@ -85,7 +85,7 @@ export default function CodeEditor({
       theme={resolvedTheme === 'dark' ? 'jscraft-dark' : 'jscraft-light'}
       onMount={handleMount}
       loading={
-        <div className="flex items-center justify-center h-full bg-slate-950">
+        <div className="flex h-full items-center justify-center bg-slate-950">
           <Spinner size="md" />
         </div>
       }
@@ -94,13 +94,13 @@ export default function CodeEditor({
         fontFamily: '"JetBrains Mono", ui-monospace, monospace',
         fontLigatures: true,
         lineHeight: 1.7,
-        minimap:       { enabled: false },
+        minimap: { enabled: false },
         scrollBeyondLastLine: false,
         readOnly,
         automaticLayout: true,
-        padding:       { top: 16, bottom: 16 },
-        tabSize:       2,
-        wordWrap:      'on',
+        padding: { top: 16, bottom: 16 },
+        tabSize: 2,
+        wordWrap: 'on',
         smoothScrolling: true,
         cursorBlinking: 'smooth',
         renderLineHighlight: 'line',
@@ -108,7 +108,7 @@ export default function CodeEditor({
         quickSuggestions: { other: true, comments: false, strings: false },
         bracketPairColorization: { enabled: true },
         formatOnPaste: true,
-        formatOnType:  false,
+        formatOnType: false,
         scrollbar: {
           verticalScrollbarSize: 4,
           horizontalScrollbarSize: 4,
