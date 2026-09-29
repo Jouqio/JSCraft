@@ -4,6 +4,12 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
+  if (process.env.NODE_ENV === 'production' && process.env.ALLOW_PROD_SEED !== 'true') {
+    console.error('❌ SEED ABORTED: Seeding demo accounts and data is blocked in production environment.');
+    console.error('   To explicitly allow seeding in production, set ALLOW_PROD_SEED=true.');
+    process.exit(1);
+  }
+
   console.log('🌱 Seeding JSCraft database...');
 
   // ── Admin user ──
