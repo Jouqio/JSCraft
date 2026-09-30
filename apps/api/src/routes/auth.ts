@@ -42,19 +42,24 @@ const loginSchema = z.object({
 });
 
 // POST /v1/auth/register
-router.post('/register', registerRateLimit, validateBody(registerSchema), async (req, res, next) => {
-  try {
-    const user = await authService.register(req.body);
-    const { accessToken, refreshToken } = authService.generateTokenPair(user.id, user.role);
-    await authService.saveRefreshToken(user.id, refreshToken, req.headers['user-agent'], req.ip);
+router.post(
+  '/register',
+  registerRateLimit,
+  validateBody(registerSchema),
+  async (req, res, next) => {
+    try {
+      const user = await authService.register(req.body);
+      const { accessToken, refreshToken } = authService.generateTokenPair(user.id, user.role);
+      await authService.saveRefreshToken(user.id, refreshToken, req.headers['user-agent'], req.ip);
 
-    res.cookie('refresh_token', refreshToken, REFRESH_COOKIE_OPTIONS);
+      res.cookie('refresh_token', refreshToken, REFRESH_COOKIE_OPTIONS);
 
-    res.status(201).json({ success: true, data: { user, accessToken } });
-  } catch (err) {
-    next(err);
+      res.status(201).json({ success: true, data: { user, accessToken } });
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 // POST /v1/auth/login
 router.post(
@@ -63,19 +68,20 @@ router.post(
   loginAccountRateLimit,
   validateBody(loginSchema),
   async (req, res, next) => {
-  try {
-    const { email, password } = req.body as { email: string; password: string };
-    const user = await authService.login(email, password);
-    const { accessToken, refreshToken } = authService.generateTokenPair(user.id, user.role);
-    await authService.saveRefreshToken(user.id, refreshToken, req.headers['user-agent'], req.ip);
+    try {
+      const { email, password } = req.body as { email: string; password: string };
+      const user = await authService.login(email, password);
+      const { accessToken, refreshToken } = authService.generateTokenPair(user.id, user.role);
+      await authService.saveRefreshToken(user.id, refreshToken, req.headers['user-agent'], req.ip);
 
-    res.cookie('refresh_token', refreshToken, REFRESH_COOKIE_OPTIONS);
+      res.cookie('refresh_token', refreshToken, REFRESH_COOKIE_OPTIONS);
 
-    res.json({ success: true, data: { user, accessToken } });
-  } catch (err) {
-    next(err);
+      res.json({ success: true, data: { user, accessToken } });
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 // POST /v1/auth/refresh
 router.post('/refresh', refreshRateLimit, csrfOriginCheck, async (req, res, next) => {

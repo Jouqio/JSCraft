@@ -53,8 +53,7 @@ export const useAuthStore = create<AuthState>()(
                   ? 'authenticated'
                   : 'anonymous'
                 : s.status,
-            isAuthenticated:
-              s.status === 'authenticated' || (!!s.user && !!s.accessToken),
+            isAuthenticated: s.status === 'authenticated' || (!!s.user && !!s.accessToken),
           })),
 
         login: async (email, password) => {
@@ -149,9 +148,12 @@ export const useAuthStore = create<AuthState>()(
               }
 
               if (errorCode === 'ACCOUNT_DEACTIVATED') {
-                toast.error(errorMessage || 'Akun telah dinonaktifkan. Silakan hubungi administrator.', {
-                  id: 'account-deactivated',
-                });
+                toast.error(
+                  errorMessage || 'Akun telah dinonaktifkan. Silakan hubungi administrator.',
+                  {
+                    id: 'account-deactivated',
+                  }
+                );
                 set({
                   user: null,
                   accessToken: null,
@@ -183,8 +185,7 @@ export const useAuthStore = create<AuthState>()(
           return activeRefreshPromise;
         },
 
-        updateUser: (patch) =>
-          set((s) => ({ user: s.user ? { ...s.user, ...patch } : null })),
+        updateUser: (patch) => set((s) => ({ user: s.user ? { ...s.user, ...patch } : null })),
 
         addXP: (amount) =>
           set((s) => {

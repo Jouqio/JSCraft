@@ -122,11 +122,7 @@ function unwrapEnvelope<T>(res: AxiosResponse<unknown>): T {
   const payload = res.data as ApiResponse<T> | undefined;
 
   if (!payload || typeof payload !== 'object') {
-    throw new ApiClientError(
-      res.status,
-      'INVALID_RESPONSE',
-      'Format respons server tidak valid'
-    );
+    throw new ApiClientError(res.status, 'INVALID_RESPONSE', 'Format respons server tidak valid');
   }
 
   if (payload.success === false) {
@@ -154,12 +150,7 @@ function handleAxiosError(err: unknown): never {
     const status = err.response?.status ?? 0;
     const body = err.response?.data as ApiResponse<unknown> | undefined;
     if (body && body.success === false && body.error) {
-      throw new ApiClientError(
-        status,
-        body.error.code,
-        body.error.message,
-        body.error.details
-      );
+      throw new ApiClientError(status, body.error.code, body.error.message, body.error.details);
     }
     throw new ApiClientError(
       status,
@@ -170,7 +161,11 @@ function handleAxiosError(err: unknown): never {
   if (err instanceof ApiClientError) {
     throw err;
   }
-  throw new ApiClientError(500, 'UNEXPECTED_ERROR', err instanceof Error ? err.message : String(err));
+  throw new ApiClientError(
+    500,
+    'UNEXPECTED_ERROR',
+    err instanceof Error ? err.message : String(err)
+  );
 }
 
 export async function apiGet<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
@@ -185,12 +180,20 @@ export async function apiGet<T>(url: string, config?: AxiosRequestConfig): Promi
 export async function apiGetList<T>(url: string, config?: AxiosRequestConfig): Promise<T[]> {
   const data = await apiGet<T[]>(url, config);
   if (!Array.isArray(data)) {
-    throw new ApiClientError(500, 'INVALID_DATA_SHAPE', 'Respons server bukan array data yang valid');
+    throw new ApiClientError(
+      500,
+      'INVALID_DATA_SHAPE',
+      'Respons server bukan array data yang valid'
+    );
   }
   return data;
 }
 
-export async function apiPost<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
+export async function apiPost<T>(
+  url: string,
+  data?: unknown,
+  config?: AxiosRequestConfig
+): Promise<T> {
   try {
     const res = await api.post<unknown>(url, data, config);
     return unwrapEnvelope<T>(res);
@@ -199,7 +202,11 @@ export async function apiPost<T>(url: string, data?: unknown, config?: AxiosRequ
   }
 }
 
-export async function apiPatch<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
+export async function apiPatch<T>(
+  url: string,
+  data?: unknown,
+  config?: AxiosRequestConfig
+): Promise<T> {
   try {
     const res = await api.patch<unknown>(url, data, config);
     return unwrapEnvelope<T>(res);

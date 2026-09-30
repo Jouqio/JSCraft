@@ -81,7 +81,11 @@ export const authService = {
     }
 
     if (!user.isActive) {
-      throw new AppError(401, 'ACCOUNT_DEACTIVATED', 'Akun telah dinonaktifkan. Silakan hubungi administrator.');
+      throw new AppError(
+        401,
+        'ACCOUNT_DEACTIVATED',
+        'Akun telah dinonaktifkan. Silakan hubungi administrator.'
+      );
     }
 
     // Update last active
@@ -203,7 +207,11 @@ export const authService = {
     }
 
     if (rotationResult.status === 'ACCOUNT_DEACTIVATED') {
-      throw new AppError(401, 'ACCOUNT_DEACTIVATED', 'Akun telah dinonaktifkan. Silakan hubungi administrator.');
+      throw new AppError(
+        401,
+        'ACCOUNT_DEACTIVATED',
+        'Akun telah dinonaktifkan. Silakan hubungi administrator.'
+      );
     }
 
     if (rotationResult.status === 'INVALID_SESSION') {
@@ -233,18 +241,25 @@ export const authService = {
         where: { userId: existingSession.userId },
         data: { isRevoked: true, revokedAt: now },
       });
-      throw new AppError(401, 'ACCOUNT_DEACTIVATED', 'Akun telah dinonaktifkan. Silakan hubungi administrator.');
+      throw new AppError(
+        401,
+        'ACCOUNT_DEACTIVATED',
+        'Akun telah dinonaktifkan. Silakan hubungi administrator.'
+      );
     }
 
     if (existingSession.expiresAt <= now) {
-      throw new AppError(401, 'INVALID_REFRESH_TOKEN', 'Sesi telah kadaluarsa. Silakan login ulang.');
+      throw new AppError(
+        401,
+        'INVALID_REFRESH_TOKEN',
+        'Sesi telah kadaluarsa. Silakan login ulang.'
+      );
     }
 
     // Token was already revoked: check grace window for concurrent requests (e.g. StrictMode, 2 tabs)
     const graceMs = (env.REFRESH_TOKEN_GRACE_SECONDS ?? 15) * 1000;
     const isWithinGrace =
-      existingSession.revokedAt &&
-      now.getTime() - existingSession.revokedAt.getTime() <= graceMs;
+      existingSession.revokedAt && now.getTime() - existingSession.revokedAt.getTime() <= graceMs;
 
     if (isWithinGrace) {
       // Within grace window: reject without revoking family
@@ -327,10 +342,7 @@ export const authService = {
 
     const { count } = await prisma.session.deleteMany({
       where: {
-        OR: [
-          { expiresAt: { lt: now } },
-          { isRevoked: true, revokedAt: { lt: oneDayAgo } },
-        ],
+        OR: [{ expiresAt: { lt: now } }, { isRevoked: true, revokedAt: { lt: oneDayAgo } }],
       },
     });
 

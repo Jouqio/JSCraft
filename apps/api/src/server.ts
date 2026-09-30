@@ -57,14 +57,14 @@ const allowedOrigins = [
   new URL(env.FRONTEND_URL).origin,
   ...(env.ALLOWED_ORIGINS
     ? env.ALLOWED_ORIGINS.split(',')
-      .map((o) => {
-        try {
-          return new URL(o.trim()).origin;
-        } catch {
-          return o.trim();
-        }
-      })
-      .filter(Boolean)
+        .map((o) => {
+          try {
+            return new URL(o.trim()).origin;
+          } catch {
+            return o.trim();
+          }
+        })
+        .filter(Boolean)
     : []),
 ];
 
@@ -130,7 +130,8 @@ if (env.ENABLE_CRON) {
       if (count > 0) console.log(`[cron] Reset ${count} expired streaks`);
 
       const cleanedSessions = await authService.cleanupExpiredSessions();
-      if (cleanedSessions > 0) console.log(`[cron] Cleaned ${cleanedSessions} expired/revoked sessions`);
+      if (cleanedSessions > 0)
+        console.log(`[cron] Cleaned ${cleanedSessions} expired/revoked sessions`);
     } catch (err) {
       console.error('[cron] streak or session cleanup failed:', err);
     }

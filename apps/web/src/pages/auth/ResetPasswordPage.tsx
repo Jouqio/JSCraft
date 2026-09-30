@@ -32,10 +32,7 @@ export default function ResetPasswordPage() {
       toast.success('Password berhasil direset! Silakan login.');
       navigate('/login');
     } catch (err: unknown) {
-      const msg =
-        err instanceof ApiClientError
-          ? err.message
-          : 'Gagal reset password.';
+      const msg = err instanceof ApiClientError ? err.message : 'Gagal reset password.';
       toast.error(msg);
     } finally {
       setLoading(false);

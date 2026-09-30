@@ -149,16 +149,19 @@ npm run dev
 ## Deployment & Security Configuration
 
 ### Reverse Proxy & `TRUST_PROXY`
+
 - **Default**: `TRUST_PROXY=false` (aman untuk local development langsung ke server).
 - **Railway / Production**: Set `TRUST_PROXY=1` di environment Railway. Railway menempatkan 1 reverse proxy di depan container. Nilai `1` memberi instruksi kepada Express untuk membaca IP klien dari hop pertama `X-Forwarded-For`, mencegah IP spoofing sekaligus memastikan rate limiter menghitung IP pengguna asli.
 - **Verifikasi Hop**: Buat request `curl -H "X-Forwarded-For: 203.0.113.195" https://api.yourdomain.com/v1/health` dan periksa IP yang dicatat morgan/rate limiter untuk memastikan IP tidak tertukar dengan proxy internal.
 
 ### Cookie Policy (SameSite Lax & Domain)
+
 - Refresh token dikirimkan melalui cookie httpOnly dengan `SameSite=Lax` dan `Path=/v1/auth`.
 - **Syarat Domain**: Frontend Web dan Backend API **harus berada dalam satu situs / domain induk yang sama** (misal `jscraft.dev` dan `api.jscraft.dev`, atau reverse proxy routing `/` dan `/v1`). Jangan menggunakan domain berbeda level TLD (cross-site) karena browser akan memblokir pengiriman cookie Lax pada request POST cross-site.
 
 ### Rate Limiting & Multi-Instance
-- Rate limiter backend menggunakan *in-memory store* secara bawaan.
+
+- Rate limiter backend menggunakan _in-memory store_ secara bawaan.
 - **Catatan**: Penghitung rate limit bersifat lokal per-proses/container dan tidak dibagi antar instance horizontal kecuali dikonfigurasi menggunakan Redis store (`REDIS_URL`).
 
 ## Project Structure

@@ -25,11 +25,7 @@ export function getAllowedOrigins(): string[] {
   return Array.from(origins);
 }
 
-export const csrfOriginCheck = (
-  req: Request,
-  _res: Response,
-  next: NextFunction
-): void => {
+export const csrfOriginCheck = (req: Request, _res: Response, next: NextFunction): void => {
   const allowed = getAllowedOrigins();
 
   let requestOrigin = req.headers.origin;

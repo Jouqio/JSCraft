@@ -54,7 +54,11 @@ export const authenticate = async (
     }
 
     if (!user.isActive) {
-      throw new AppError(401, 'ACCOUNT_DEACTIVATED', 'Akun telah dinonaktifkan. Silakan hubungi administrator.');
+      throw new AppError(
+        401,
+        'ACCOUNT_DEACTIVATED',
+        'Akun telah dinonaktifkan. Silakan hubungi administrator.'
+      );
     }
 
     // Attach to request

@@ -111,9 +111,7 @@ export const useProgressStore = create<ProgressState>()(
 
           set({ isSyncing: true });
           try {
-            const data = await apiGet<{ progress: ProgressMap; streak: StreakInfo }>(
-              '/progress'
-            );
+            const data = await apiGet<{ progress: ProgressMap; streak: StreakInfo }>('/progress');
             set({
               progress: data.progress,
               streak: data.streak,

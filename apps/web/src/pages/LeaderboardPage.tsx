@@ -23,8 +23,7 @@ export default function LeaderboardPage() {
         setEntries(data);
       })
       .catch((err: unknown) => {
-        const msg =
-          err instanceof ApiClientError ? err.message : 'Gagal memuat data papan skor.';
+        const msg = err instanceof ApiClientError ? err.message : 'Gagal memuat data papan skor.';
         setError(msg);
       })
       .finally(() => setLoading(false));
@@ -60,7 +59,7 @@ export default function LeaderboardPage() {
         </div>
 
         {error ? (
-          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-8 text-center dark:border-rose-900/50 dark:bg-rose-950/30 mb-8">
+          <div className="mb-8 rounded-2xl border border-rose-200 bg-rose-50 p-8 text-center dark:border-rose-900/50 dark:bg-rose-950/30">
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-rose-100 dark:bg-rose-900/50">
               <AlertCircle
                 className="h-6 w-6 text-rose-600 dark:text-rose-400"
