@@ -1,15 +1,32 @@
-import { Router } from 'express';
+import { Router, type CookieOptions } from 'express';
 import { z } from 'zod';
 import { authService } from '../services/authService.js';
 import { authenticate } from '../middleware/auth.js';
-import { authRateLimit } from '../middleware/rateLimit.js';
+import {
+  loginIpRateLimit,
+  loginAccountRateLimit,
+  registerRateLimit,
+  forgotPasswordRateLimit,
+  resetPasswordRateLimit,
+  refreshRateLimit,
+} from '../middleware/rateLimit.js';
+import { csrfOriginCheck } from '../middleware/csrf.js';
 import { validateBody } from '../middleware/validate.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { env } from '../config/env.js';
 
 const router = Router();
 
+export const REFRESH_COOKIE_OPTIONS: CookieOptions = {
+  httpOnly: true,
+  secure: env.NODE_ENV === 'production',
+  sameSite: 'lax',
+  path: '/v1/auth',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
+
 const registerSchema = z.object({
-  email: z.string().email(),
+  email: z.string().trim().toLowerCase().email(),
   username: z
     .string()
     .min(3)
@@ -20,23 +37,18 @@ const registerSchema = z.object({
 });
 
 const loginSchema = z.object({
-  email: z.string().email(),
+  email: z.string().trim().toLowerCase().email(),
   password: z.string().min(1),
 });
 
 // POST /v1/auth/register
-router.post('/register', authRateLimit, validateBody(registerSchema), async (req, res, next) => {
+router.post('/register', registerRateLimit, validateBody(registerSchema), async (req, res, next) => {
   try {
     const user = await authService.register(req.body);
     const { accessToken, refreshToken } = authService.generateTokenPair(user.id, user.role);
     await authService.saveRefreshToken(user.id, refreshToken, req.headers['user-agent'], req.ip);
 
-    res.cookie('refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie('refresh_token', refreshToken, REFRESH_COOKIE_OPTIONS);
 
     res.status(201).json({ success: true, data: { user, accessToken } });
   } catch (err) {
@@ -45,19 +57,19 @@ router.post('/register', authRateLimit, validateBody(registerSchema), async (req
 });
 
 // POST /v1/auth/login
-router.post('/login', authRateLimit, validateBody(loginSchema), async (req, res, next) => {
+router.post(
+  '/login',
+  loginIpRateLimit,
+  loginAccountRateLimit,
+  validateBody(loginSchema),
+  async (req, res, next) => {
   try {
     const { email, password } = req.body as { email: string; password: string };
     const user = await authService.login(email, password);
     const { accessToken, refreshToken } = authService.generateTokenPair(user.id, user.role);
     await authService.saveRefreshToken(user.id, refreshToken, req.headers['user-agent'], req.ip);
 
-    res.cookie('refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie('refresh_token', refreshToken, REFRESH_COOKIE_OPTIONS);
 
     res.json({ success: true, data: { user, accessToken } });
   } catch (err) {
@@ -66,19 +78,14 @@ router.post('/login', authRateLimit, validateBody(loginSchema), async (req, res,
 });
 
 // POST /v1/auth/refresh
-router.post('/refresh', async (req, res, next) => {
+router.post('/refresh', refreshRateLimit, csrfOriginCheck, async (req, res, next) => {
   try {
     const token = req.cookies['refresh_token'] as string | undefined;
     if (!token) throw new AppError(401, 'NO_REFRESH_TOKEN', 'Tidak ada refresh token');
 
     const { user, tokens } = await authService.rotateRefreshToken(token);
 
-    res.cookie('refresh_token', tokens.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie('refresh_token', tokens.refreshToken, REFRESH_COOKIE_OPTIONS);
 
     res.json({ success: true, data: { user, accessToken: tokens.accessToken } });
   } catch (err) {
@@ -87,11 +94,14 @@ router.post('/refresh', async (req, res, next) => {
 });
 
 // POST /v1/auth/logout
-router.post('/logout', async (req, res, next) => {
+router.post('/logout', csrfOriginCheck, async (req, res, next) => {
   try {
     const token = req.cookies['refresh_token'] as string | undefined;
     if (token) await authService.revokeRefreshToken(token);
-    res.clearCookie('refresh_token');
+    res.clearCookie('refresh_token', {
+      ...REFRESH_COOKIE_OPTIONS,
+      maxAge: 0,
+    });
     res.json({ success: true, data: { message: 'Berhasil logout' } });
   } catch (err) {
     next(err);
@@ -113,10 +123,10 @@ export default router;
 // POST /v1/auth/forgot-password
 router.post(
   '/forgot-password',
-  authRateLimit,
+  forgotPasswordRateLimit,
   validateBody(
     z.object({
-      email: z.string().email(),
+      email: z.string().trim().toLowerCase().email(),
     })
   ),
   async (req, res, next) => {
@@ -157,7 +167,7 @@ router.post(
 // POST /v1/auth/reset-password
 router.post(
   '/reset-password',
-  authRateLimit,
+  resetPasswordRateLimit,
   validateBody(
     z.object({
       token: z.string().min(1),

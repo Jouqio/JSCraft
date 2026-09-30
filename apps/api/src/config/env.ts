@@ -29,6 +29,12 @@ const envSchema = z.object({
     .enum(['true', 'false'])
     .default('true')
     .transform((v) => v === 'true'),
+  TRUST_PROXY: z.string().default('false'),
+  ALLOWED_ORIGINS: z.string().optional(),
+  REFRESH_TOKEN_GRACE_SECONDS: z.coerce.number().default(15),
+}).refine((data) => data.JWT_ACCESS_SECRET !== data.JWT_REFRESH_SECRET, {
+  message: 'JWT_ACCESS_SECRET and JWT_REFRESH_SECRET must not be identical',
+  path: ['JWT_REFRESH_SECRET'],
 });
 
 const parsed = envSchema.safeParse(process.env);
