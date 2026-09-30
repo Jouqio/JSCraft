@@ -107,67 +107,69 @@ export default function CoursePage() {
         <div className="space-y-2">
           {lessons.length === 0 ? (
             <div className="rounded-xl border border-slate-200 bg-white p-8 text-center dark:border-slate-800 dark:bg-slate-900">
-              <p className="text-sm text-slate-500 dark:text-slate-400">Belum ada materi pelajaran untuk kursus ini.</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                Belum ada materi pelajaran untuk kursus ini.
+              </p>
             </div>
           ) : (
             lessons.map((lesson, i) => {
-            const done = isCompleted(lesson.id);
-            const typeLabel = { THEORY: 'Teori', PRACTICE: 'Praktik', PROJECT: 'Proyek' }[
-              lesson.type
-            ];
-            const isLocked = course.isPremium && i > 1; // first 2 free in premium
-            return (
-              <motion.div
-                key={lesson.id}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.04 }}
-              >
-                <Link
-                  to={isLocked ? '#' : `/courses/${slug}/${lesson.id}`}
-                  className={cn(
-                    'flex items-center gap-4 rounded-xl border p-4 transition-all duration-150',
-                    isLocked
-                      ? 'cursor-not-allowed border-slate-200 bg-slate-50 opacity-60 dark:border-slate-800 dark:bg-slate-900/50'
-                      : 'card-hover group'
-                  )}
+              const done = isCompleted(lesson.id);
+              const typeLabel = { THEORY: 'Teori', PRACTICE: 'Praktik', PROJECT: 'Proyek' }[
+                lesson.type
+              ];
+              const isLocked = course.isPremium && i > 1; // first 2 free in premium
+              return (
+                <motion.div
+                  key={lesson.id}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.04 }}
                 >
-                  {/* Day number */}
-                  <div
+                  <Link
+                    to={isLocked ? '#' : `/courses/${slug}/${lesson.id}`}
                     className={cn(
-                      'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-mono text-sm font-bold transition-colors',
-                      done
-                        ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30'
-                        : 'group-hover:bg-brand-100 group-hover:text-brand-600 bg-slate-100 text-slate-500 dark:bg-slate-800'
+                      'flex items-center gap-4 rounded-xl border p-4 transition-all duration-150',
+                      isLocked
+                        ? 'cursor-not-allowed border-slate-200 bg-slate-50 opacity-60 dark:border-slate-800 dark:bg-slate-900/50'
+                        : 'card-hover group'
                     )}
                   >
-                    {done ? <CheckCircle className="h-5 w-5" /> : lesson.dayNumber}
-                  </div>
-
-                  {/* Info */}
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="truncate text-sm font-medium text-slate-900 dark:text-white">
-                        {lesson.titleId}
-                      </span>
+                    {/* Day number */}
+                    <div
+                      className={cn(
+                        'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-mono text-sm font-bold transition-colors',
+                        done
+                          ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30'
+                          : 'group-hover:bg-brand-100 group-hover:text-brand-600 bg-slate-100 text-slate-500 dark:bg-slate-800'
+                      )}
+                    >
+                      {done ? <CheckCircle className="h-5 w-5" /> : lesson.dayNumber}
                     </div>
-                    <span className="text-2xs text-slate-400">{typeLabel}</span>
-                  </div>
 
-                  {/* Right */}
-                  <div className="flex shrink-0 items-center gap-2">
-                    <span className="xp-badge hidden sm:inline-flex">+{lesson.xpReward} XP</span>
-                    {isLocked ? (
-                      <Lock className="h-4 w-4 text-slate-400" />
-                    ) : (
-                      <PlayCircle className="group-hover:text-brand-500 h-4 w-4 text-slate-300 transition-colors" />
-                    )}
-                  </div>
-                </Link>
-              </motion.div>
-            );
-          })
-        )}
+                    {/* Info */}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="truncate text-sm font-medium text-slate-900 dark:text-white">
+                          {lesson.titleId}
+                        </span>
+                      </div>
+                      <span className="text-2xs text-slate-400">{typeLabel}</span>
+                    </div>
+
+                    {/* Right */}
+                    <div className="flex shrink-0 items-center gap-2">
+                      <span className="xp-badge hidden sm:inline-flex">+{lesson.xpReward} XP</span>
+                      {isLocked ? (
+                        <Lock className="h-4 w-4 text-slate-400" />
+                      ) : (
+                        <PlayCircle className="group-hover:text-brand-500 h-4 w-4 text-slate-300 transition-colors" />
+                      )}
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })
+          )}
         </div>
       </div>
     </>

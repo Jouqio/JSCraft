@@ -23,8 +23,7 @@ export default function CoursesPage() {
         setCourses(data);
       })
       .catch((err: unknown) => {
-        const msg =
-          err instanceof ApiClientError ? err.message : 'Gagal memuat kurikulum kursus.';
+        const msg = err instanceof ApiClientError ? err.message : 'Gagal memuat kurikulum kursus.';
         setError(msg);
       })
       .finally(() => setLoading(false));

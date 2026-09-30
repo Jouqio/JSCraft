@@ -42,10 +42,9 @@ export default function UserManagerPage() {
   }, [page, dSearch]);
 
   const items = Array.isArray(data?.items) ? data.items : [];
-  const filtered =
-    items.filter(
-      (u) => !dSearch || u.email.includes(dSearch) || u.username.includes(dSearch)
-    );
+  const filtered = items.filter(
+    (u) => !dSearch || u.email.includes(dSearch) || u.username.includes(dSearch)
+  );
 
   return (
     <>
@@ -98,51 +97,51 @@ export default function UserManagerPage() {
                   </tr>
                 ) : (
                   filtered.map((u) => (
-                      <tr
-                        key={u.id}
-                        className="transition-colors hover:bg-slate-50 dark:hover:bg-slate-900/50"
-                      >
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <div className="bg-brand-100 dark:bg-brand-900/30 text-brand-600 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold">
-                              {u.displayName?.[0]?.toUpperCase() ?? u.username[0]?.toUpperCase()}
-                            </div>
-                            <span className="font-medium text-slate-900 dark:text-white">
-                              {u.displayName ?? u.username}
-                            </span>
+                    <tr
+                      key={u.id}
+                      className="transition-colors hover:bg-slate-50 dark:hover:bg-slate-900/50"
+                    >
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <div className="bg-brand-100 dark:bg-brand-900/30 text-brand-600 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold">
+                            {u.displayName?.[0]?.toUpperCase() ?? u.username[0]?.toUpperCase()}
                           </div>
-                        </td>
-                        <td className="px-4 py-3 font-mono text-xs text-slate-500 dark:text-slate-400">
-                          {u.email}
-                        </td>
-                        <td className="px-4 py-3">
-                          <Badge variant={u.role === 'ADMIN' ? 'warning' : 'slate'}>
-                            {u.role === 'ADMIN' ? (
-                              <>
-                                <Shield className="h-3 w-3" /> Admin
-                              </>
-                            ) : (
-                              <>
-                                <User className="h-3 w-3" /> Student
-                              </>
-                            )}
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className="xp-badge">
-                            ⚡{u.xpTotal} · Lv.{u.level}
+                          <span className="font-medium text-slate-900 dark:text-white">
+                            {u.displayName ?? u.username}
                           </span>
-                        </td>
-                        <td className="px-4 py-3 text-xs text-slate-400">
-                          {formatRelative(u.createdAt)}
-                        </td>
-                        <td className="px-4 py-3">
-                          <Badge variant={u.isActive ? 'success' : 'danger'}>
-                            {u.isActive ? 'Aktif' : 'Nonaktif'}
-                          </Badge>
-                        </td>
-                      </tr>
-                    ))
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 font-mono text-xs text-slate-500 dark:text-slate-400">
+                        {u.email}
+                      </td>
+                      <td className="px-4 py-3">
+                        <Badge variant={u.role === 'ADMIN' ? 'warning' : 'slate'}>
+                          {u.role === 'ADMIN' ? (
+                            <>
+                              <Shield className="h-3 w-3" /> Admin
+                            </>
+                          ) : (
+                            <>
+                              <User className="h-3 w-3" /> Student
+                            </>
+                          )}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="xp-badge">
+                          ⚡{u.xpTotal} · Lv.{u.level}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-xs text-slate-400">
+                        {formatRelative(u.createdAt)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <Badge variant={u.isActive ? 'success' : 'danger'}>
+                          {u.isActive ? 'Aktif' : 'Nonaktif'}
+                        </Badge>
+                      </td>
+                    </tr>
+                  ))
                 )}
               </tbody>
             </table>
