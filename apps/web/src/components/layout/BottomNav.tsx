@@ -31,13 +31,14 @@ export default function BottomNav() {
             to={to}
             className={cn(
               'flex flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors',
-              isActive
-                ? 'text-brand-600 dark:text-brand-400'
-                : ''
+              isActive ? 'text-brand-600 dark:text-brand-400' : ''
             )}
             style={isActive ? undefined : { color: 'var(--color-ink-muted)' }}
           >
-            <Icon className={cn('h-5 w-5', isActive && 'scale-110')} strokeWidth={isActive ? 2.5 : 2} />
+            <Icon
+              className={cn('h-5 w-5', isActive && 'scale-110')}
+              strokeWidth={isActive ? 2.5 : 2}
+            />
             <span>{label}</span>
           </NavLink>
         );

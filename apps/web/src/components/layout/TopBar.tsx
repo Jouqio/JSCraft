@@ -1,17 +1,7 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-  Code2,
-  BookOpen,
-  Trophy,
-  Sun,
-  Moon,
-  Menu,
-  X,
-  LogOut,
-  User,
-} from 'lucide-react';
+import { Code2, BookOpen, Trophy, Sun, Moon, Menu, X, LogOut, User } from 'lucide-react';
 import { useAuthStore } from '@store/authStore';
 import { useThemeStore } from '@store/themeStore';
 import { xpService, formatXP } from '@lib/xp';
@@ -56,7 +46,10 @@ export default function TopBar() {
             <div className="from-brand-400 to-brand-600 flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br shadow-sm">
               <Code2 className="h-4 w-4 text-white" strokeWidth={2.5} />
             </div>
-            <span className="font-heading text-lg font-bold tracking-tight" style={{ color: 'var(--color-ink)' }}>
+            <span
+              className="font-heading text-lg font-bold tracking-tight"
+              style={{ color: 'var(--color-ink)' }}
+            >
               JS<span className="text-brand-500">Craft</span>
             </span>
           </Link>
@@ -91,7 +84,11 @@ export default function TopBar() {
               style={{ color: 'var(--color-ink-muted)' }}
               aria-label="Ganti tema"
             >
-              {resolvedTheme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              {resolvedTheme === 'dark' ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
             </button>
 
             <div className="hidden items-center gap-2 sm:flex">
@@ -137,9 +134,7 @@ export default function TopBar() {
                     className={({ isActive }) =>
                       cn(
                         'rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-                        isActive
-                          ? 'bg-brand-100 dark:bg-brand-900/30 text-brand-700'
-                          : ''
+                        isActive ? 'bg-brand-100 dark:bg-brand-900/30 text-brand-700' : ''
                       )
                     }
                     style={{ color: 'var(--color-ink-muted)' }}
@@ -148,10 +143,25 @@ export default function TopBar() {
                   </NavLink>
                 ))}
                 <div className="mt-2 flex gap-2 sm:hidden">
-                  <Button variant="ghost" size="sm" fullWidth onClick={() => { setMobileMenuOpen(false); navigate('/login'); }}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    fullWidth
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      navigate('/login');
+                    }}
+                  >
                     Masuk
                   </Button>
-                  <Button size="sm" fullWidth onClick={() => { setMobileMenuOpen(false); navigate('/register'); }}>
+                  <Button
+                    size="sm"
+                    fullWidth
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      navigate('/register');
+                    }}
+                  >
                     Daftar
                   </Button>
                 </div>
@@ -179,7 +189,10 @@ export default function TopBar() {
           <div className="from-brand-400 to-brand-600 flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br">
             <Code2 className="h-3.5 w-3.5 text-white" strokeWidth={2.5} />
           </div>
-          <span className="font-heading text-base font-bold tracking-tight" style={{ color: 'var(--color-ink)' }}>
+          <span
+            className="font-heading text-base font-bold tracking-tight"
+            style={{ color: 'var(--color-ink)' }}
+          >
             JS<span className="text-brand-500">Craft</span>
           </span>
         </Link>
@@ -215,7 +228,11 @@ export default function TopBar() {
             >
               <div className="from-brand-400 to-brand-600 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br text-xs font-bold text-white">
                 {user?.avatarUrl ? (
-                  <img src={user.avatarUrl} alt="" className="h-full w-full rounded-full object-cover" />
+                  <img
+                    src={user.avatarUrl}
+                    alt=""
+                    className="h-full w-full rounded-full object-cover"
+                  />
                 ) : (
                   initials(user?.displayName ?? user?.username ?? '')
                 )}
@@ -238,7 +255,10 @@ export default function TopBar() {
                     }}
                   >
                     <div className="border-b p-3" style={{ borderColor: 'var(--color-border)' }}>
-                      <p className="truncate text-sm font-semibold" style={{ color: 'var(--color-ink)' }}>
+                      <p
+                        className="truncate text-sm font-semibold"
+                        style={{ color: 'var(--color-ink)' }}
+                      >
                         {user?.displayName ?? user?.username}
                       </p>
                       <p className="truncate text-xs" style={{ color: 'var(--color-ink-muted)' }}>

@@ -43,7 +43,9 @@ for (const filePath of walkDir(SRC_DIR)) {
     for (const match of matches) {
       const char = match[0];
       if (ALLOW_LIST.has(char)) continue;
-      const codepoint = [...char].map((c) => 'U+' + c.codePointAt(0).toString(16).toUpperCase()).join(' ');
+      const codepoint = [...char]
+        .map((c) => 'U+' + c.codePointAt(0).toString(16).toUpperCase())
+        .join(' ');
       findings.push({
         file: relative(process.cwd(), filePath),
         line: i + 1,
@@ -65,12 +67,16 @@ if (violations <= baseline) {
   if (violations === 0) {
     console.log('lint:emoji PASS -- 0 emoji found in source.');
   } else {
-    console.log(`lint:emoji PASS -- ${violations} baseline emoji found (threshold: ${baseline}, 0 new emojis).`);
+    console.log(
+      `lint:emoji PASS -- ${violations} baseline emoji found (threshold: ${baseline}, 0 new emojis).`
+    );
   }
   process.exit(0);
 } else {
   const newCount = violations - baseline;
-  console.log(`lint:emoji FAIL -- ${violations} emoji/symbol(s) found (${newCount} new over baseline ${baseline}):\n`);
+  console.log(
+    `lint:emoji FAIL -- ${violations} emoji/symbol(s) found (${newCount} new over baseline ${baseline}):\n`
+  );
   for (const f of findings) {
     console.log(`  ${f.file}:${f.line}:${f.col}  ${f.char}  (${f.codepoint})`);
   }

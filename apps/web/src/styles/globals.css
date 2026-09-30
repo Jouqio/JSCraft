@@ -283,7 +283,7 @@
     @apply rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900;
   }
   .card-hover {
-    @apply card hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 dark:hover:border-slate-700;
+    @apply card transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md dark:hover:border-slate-700;
   }
 
   /* ── Badges ── */

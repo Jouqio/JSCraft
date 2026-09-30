@@ -208,7 +208,12 @@ export default function LessonPage() {
 
       <div className="flex min-h-[calc(100vh-60px)] flex-col lg:flex-row">
         {/* ── Left: Lesson content ── */}
-        <div className={cn('flex min-w-0 flex-1 flex-col', mobilePanel !== 'materi' && 'hidden lg:flex')}>
+        <div
+          className={cn(
+            'flex min-w-0 flex-1 flex-col',
+            mobilePanel !== 'materi' && 'hidden lg:flex'
+          )}
+        >
           {/* Lesson header */}
           <div className="border-b border-slate-200 px-6 py-4 dark:border-slate-800">
             <div className="mb-2 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">

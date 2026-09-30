@@ -126,7 +126,10 @@ export default function PlaygroundPage() {
         {/* Mobile / Tablet Tab Switcher (< 1024px) */}
         <div
           className="flex border-b p-1.5 lg:hidden"
-          style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-paper-subtle)' }}
+          style={{
+            borderColor: 'var(--color-border)',
+            backgroundColor: 'var(--color-paper-subtle)',
+          }}
         >
           <button
             type="button"
@@ -137,7 +140,8 @@ export default function PlaygroundPage() {
             )}
             style={{
               backgroundColor: mobilePanel === 'editor' ? 'var(--color-paper-card)' : 'transparent',
-              color: mobilePanel === 'editor' ? 'var(--color-accent-text)' : 'var(--color-ink-muted)',
+              color:
+                mobilePanel === 'editor' ? 'var(--color-accent-text)' : 'var(--color-ink-muted)',
             }}
           >
             <Code2 className="h-4 w-4" />
@@ -152,11 +156,14 @@ export default function PlaygroundPage() {
             )}
             style={{
               backgroundColor: mobilePanel === 'output' ? 'var(--color-paper-card)' : 'transparent',
-              color: mobilePanel === 'output' ? 'var(--color-accent-text)' : 'var(--color-ink-muted)',
+              color:
+                mobilePanel === 'output' ? 'var(--color-accent-text)' : 'var(--color-ink-muted)',
             }}
           >
             <Terminal className="h-4 w-4" />
-            <span>Output {hasError ? '(Error)' : output.length > 0 ? `(${output.length})` : ''}</span>
+            <span>
+              Output {hasError ? '(Error)' : output.length > 0 ? `(${output.length})` : ''}
+            </span>
           </button>
         </div>
 

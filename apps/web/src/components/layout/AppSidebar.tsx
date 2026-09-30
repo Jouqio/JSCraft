@@ -76,15 +76,15 @@ export default function AppSidebar() {
       }}
     >
       {/* ── Logo ── */}
-      <div
-        className="flex items-center gap-2 px-4"
-        style={{ height: 'var(--topbar-height)' }}
-      >
+      <div className="flex items-center gap-2 px-4" style={{ height: 'var(--topbar-height)' }}>
         <div className="from-brand-400 to-brand-600 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br">
           <Code2 className="h-4 w-4 text-white" strokeWidth={2.5} />
         </div>
         {!collapsed && (
-          <span className="font-heading text-lg font-bold tracking-tight" style={{ color: 'var(--color-ink)' }}>
+          <span
+            className="font-heading text-lg font-bold tracking-tight"
+            style={{ color: 'var(--color-ink)' }}
+          >
             JS<span className="text-brand-500">Craft</span>
           </span>
         )}
@@ -101,10 +101,12 @@ export default function AppSidebar() {
               cn(
                 'nav-item',
                 collapsed && 'justify-center px-0',
-                isActive && "bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300"
+                isActive && 'bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300'
               )
             }
-            data-active={pathname === to || (to !== '/' && pathname.startsWith(to)) ? 'true' : undefined}
+            data-active={
+              pathname === to || (to !== '/' && pathname.startsWith(to)) ? 'true' : undefined
+            }
           >
             <Icon className="h-5 w-5 shrink-0" />
             {!collapsed && <span>{label}</span>}
@@ -119,7 +121,7 @@ export default function AppSidebar() {
               cn(
                 'nav-item',
                 collapsed && 'justify-center px-0',
-                isActive && "bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300"
+                isActive && 'bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300'
               )
             }
           >
@@ -152,7 +154,11 @@ export default function AppSidebar() {
         >
           <div className="from-brand-400 to-brand-600 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-xs font-bold text-white">
             {user?.avatarUrl ? (
-              <img src={user.avatarUrl} alt="" className="h-full w-full rounded-full object-cover" />
+              <img
+                src={user.avatarUrl}
+                alt=""
+                className="h-full w-full rounded-full object-cover"
+              />
             ) : (
               initials(user?.displayName ?? user?.username ?? '')
             )}
