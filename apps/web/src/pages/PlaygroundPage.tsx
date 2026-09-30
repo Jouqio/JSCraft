@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Play, RotateCcw, Copy, Check, Code2 } from 'lucide-react';
+import { Play, RotateCcw, Copy, Check, Code2, Terminal } from 'lucide-react';
 import { useEditor } from '@hooks/useEditor';
 import { useEditorStore } from '@store/editorStore';
 import CodeEditor from '@components/editor/CodeEditor';
 import ConsoleOutput from '@components/editor/ConsoleOutput';
 import { Button } from '@components/ui/Button';
+import { cn } from '@lib/utils';
 import toast from 'react-hot-toast';
 
 const SNIPPETS = [
@@ -42,6 +43,7 @@ export default function PlaygroundPage() {
   const { code, output, hasError, isRunning, setCode, runCode, resetCode } = useEditor(STARTER);
   const [copied, setCopied] = useState(false);
   const [activeSnippet, setActiveSnippet] = useState<string | null>(null);
+  const [mobilePanel, setMobilePanel] = useState<'editor' | 'output'>('editor');
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(code);
@@ -121,10 +123,59 @@ export default function PlaygroundPage() {
           </div>
         </div>
 
+        {/* Mobile / Tablet Tab Switcher (< 1024px) */}
+        <div
+          className="flex border-b p-1.5 lg:hidden"
+          style={{
+            borderColor: 'var(--color-border)',
+            backgroundColor: 'var(--color-paper-subtle)',
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setMobilePanel('editor')}
+            className={cn(
+              'flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-xs font-semibold transition-all',
+              mobilePanel === 'editor' ? 'shadow-sm' : 'opacity-70 hover:opacity-100'
+            )}
+            style={{
+              backgroundColor: mobilePanel === 'editor' ? 'var(--color-paper-card)' : 'transparent',
+              color:
+                mobilePanel === 'editor' ? 'var(--color-accent-text)' : 'var(--color-ink-muted)',
+            }}
+          >
+            <Code2 className="h-4 w-4" />
+            <span>Editor</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobilePanel('output')}
+            className={cn(
+              'flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-xs font-semibold transition-all',
+              mobilePanel === 'output' ? 'shadow-sm' : 'opacity-70 hover:opacity-100'
+            )}
+            style={{
+              backgroundColor: mobilePanel === 'output' ? 'var(--color-paper-card)' : 'transparent',
+              color:
+                mobilePanel === 'output' ? 'var(--color-accent-text)' : 'var(--color-ink-muted)',
+            }}
+          >
+            <Terminal className="h-4 w-4" />
+            <span>
+              Output {hasError ? '(Error)' : output.length > 0 ? `(${output.length})` : ''}
+            </span>
+          </button>
+        </div>
+
         {/* Editor + output */}
         <div className="flex flex-1 flex-col overflow-hidden lg:flex-row">
           {/* Editor */}
-          <div className="min-h-[40vh] flex-1 border-b border-slate-200 lg:min-h-0 lg:border-b-0 lg:border-r dark:border-slate-800">
+          <div
+            className={cn(
+              'flex-1 border-b border-slate-200 lg:border-b-0 lg:border-r dark:border-slate-800',
+              mobilePanel !== 'editor' && 'hidden lg:block'
+            )}
+          >
             <CodeEditor
               value={code}
               onChange={(v) => setCode(v ?? '')}
@@ -134,7 +185,12 @@ export default function PlaygroundPage() {
           </div>
 
           {/* Output panel */}
-          <div className="flex w-full flex-col bg-slate-950 lg:w-[420px] xl:w-[500px]">
+          <div
+            className={cn(
+              'flex w-full flex-col bg-slate-950 lg:w-[420px] xl:w-[500px]',
+              mobilePanel !== 'output' && 'hidden lg:flex'
+            )}
+          >
             <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900 px-4 py-2.5">
               <span className="text-2xs font-mono font-semibold uppercase tracking-wider text-slate-500">
                 Console Output

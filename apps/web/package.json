@@ -8,6 +8,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint . --max-warnings 0",
+    "lint:emoji": "node scripts/lint_emoji.mjs --baseline 40",
+    "contrast:check": "node scripts/contrast_check.mjs",
     "typecheck": "tsc -b --noEmit",
     "clean": "rm -rf dist .turbo"
   },

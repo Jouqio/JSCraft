@@ -85,6 +85,7 @@ export default function LessonPage() {
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>('materi');
+  const [mobilePanel, setMobilePanel] = useState<'materi' | 'editor'>('materi');
   const [completing, setCompleting] = useState(false);
   const [showXP, setShowXP] = useState(false);
   const [earnedXP, setEarnedXP] = useState(0);
@@ -168,9 +169,51 @@ export default function LessonPage() {
         )}
       </AnimatePresence>
 
+      {/* Mobile / Tablet Tab Switcher (< 1024px) */}
+      <div
+        className="flex border-b p-1.5 lg:hidden"
+        style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-paper-subtle)' }}
+      >
+        <button
+          type="button"
+          onClick={() => setMobilePanel('materi')}
+          className={cn(
+            'flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-xs font-semibold transition-all',
+            mobilePanel === 'materi' ? 'shadow-sm' : 'opacity-70 hover:opacity-100'
+          )}
+          style={{
+            backgroundColor: mobilePanel === 'materi' ? 'var(--color-paper-card)' : 'transparent',
+            color: mobilePanel === 'materi' ? 'var(--color-accent-text)' : 'var(--color-ink-muted)',
+          }}
+        >
+          <BookOpen className="h-4 w-4" />
+          <span>Materi</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobilePanel('editor')}
+          className={cn(
+            'flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-xs font-semibold transition-all',
+            mobilePanel === 'editor' ? 'shadow-sm' : 'opacity-70 hover:opacity-100'
+          )}
+          style={{
+            backgroundColor: mobilePanel === 'editor' ? 'var(--color-paper-card)' : 'transparent',
+            color: mobilePanel === 'editor' ? 'var(--color-accent-text)' : 'var(--color-ink-muted)',
+          }}
+        >
+          <Terminal className="h-4 w-4" />
+          <span>Editor & Output</span>
+        </button>
+      </div>
+
       <div className="flex min-h-[calc(100vh-60px)] flex-col lg:flex-row">
         {/* ── Left: Lesson content ── */}
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div
+          className={cn(
+            'flex min-w-0 flex-1 flex-col',
+            mobilePanel !== 'materi' && 'hidden lg:flex'
+          )}
+        >
           {/* Lesson header */}
           <div className="border-b border-slate-200 px-6 py-4 dark:border-slate-800">
             <div className="mb-2 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
@@ -311,7 +354,12 @@ export default function LessonPage() {
         </div>
 
         {/* ── Right: Code editor panel ── */}
-        <div className="flex w-full flex-col border-l border-slate-200 bg-slate-950 lg:w-[480px] xl:w-[560px] dark:border-slate-800">
+        <div
+          className={cn(
+            'flex w-full flex-col border-l border-slate-200 bg-slate-950 lg:w-[480px] xl:w-[560px] dark:border-slate-800',
+            mobilePanel !== 'editor' && 'hidden lg:flex'
+          )}
+        >
           {/* Editor topbar */}
           <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900 px-4 py-3">
             <span className="font-mono text-xs font-semibold text-slate-400">▶ Coba Sendiri</span>
