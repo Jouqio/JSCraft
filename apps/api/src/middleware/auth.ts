@@ -31,7 +31,11 @@ export const authenticate = async (
     let payload: JWTPayload;
 
     try {
-      payload = jwt.verify(token, env.JWT_ACCESS_SECRET) as JWTPayload;
+      payload = jwt.verify(token, env.JWT_ACCESS_SECRET, {
+        algorithms: ['HS256'],
+        issuer: 'jscraft-api',
+        audience: 'jscraft-app',
+      }) as JWTPayload;
     } catch (err) {
       if (err instanceof jwt.TokenExpiredError) {
         throw new AppError(401, 'TOKEN_EXPIRED', 'Token sudah kadaluarsa');
@@ -39,14 +43,18 @@ export const authenticate = async (
       throw new AppError(401, 'INVALID_TOKEN', 'Token tidak valid');
     }
 
-    // Verify user still exists in DB (deactivation check)
+    // Verify user still exists in DB and is active (deactivation check)
     const user = await prisma.user.findUnique({
       where: { id: payload.sub },
-      select: { id: true, role: true },
+      select: { id: true, role: true, isActive: true },
     });
 
     if (!user) {
       throw new AppError(401, 'USER_NOT_FOUND', 'Akun tidak ditemukan');
+    }
+
+    if (!user.isActive) {
+      throw new AppError(401, 'ACCOUNT_DEACTIVATED', 'Akun telah dinonaktifkan. Silakan hubungi administrator.');
     }
 
     // Attach to request
