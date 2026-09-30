@@ -8,12 +8,14 @@ interface Props {
 }
 
 export default function ProtectedRoute({ children }: Props) {
-  const { isAuthenticated, isHydrating } = useAuthStore();
+  const { status } = useAuthStore();
   const location = useLocation();
 
-  if (isHydrating) return <PageSpinner />;
+  if (status === 'restoring') {
+    return <PageSpinner />;
+  }
 
-  if (!isAuthenticated) {
+  if (status !== 'authenticated') {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

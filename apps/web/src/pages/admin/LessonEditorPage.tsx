@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Save, ArrowLeft } from 'lucide-react';
-import { api } from '@lib/api';
+import { apiPost, apiPatch } from '@lib/api';
 import { Button } from '@components/ui/Button';
 import { Input } from '@components/ui/Input';
 import toast from 'react-hot-toast';
@@ -29,8 +29,8 @@ export default function LessonEditorPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      if (isNew) await api.post('/admin/lessons', form);
-      else await api.patch(`/admin/lessons/${id}`, form);
+      if (isNew) await apiPost('/admin/lessons', form);
+      else await apiPatch(`/admin/lessons/${id}`, form);
       toast.success('Pelajaran disimpan!');
       navigate('/admin');
     } catch {

@@ -4,6 +4,7 @@ import { prisma } from '../config/database.js';
 import { authenticate, requireAdmin } from '../middleware/auth.js';
 import { validateBody } from '../middleware/validate.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { authService } from '../services/authService.js';
 
 const router = Router();
 router.use(authenticate, requireAdmin);
@@ -132,17 +133,46 @@ router.patch('/lessons/:id', async (req, res, next) => {
 });
 
 // PATCH /v1/admin/users/:id
-router.patch('/users/:id', async (req, res, next) => {
-  try {
-    const user = await prisma.user.update({
-      where: { id: req.params.id },
-      data: req.body,
-      select: { id: true, email: true, username: true, role: true, isActive: true },
-    });
-    res.json({ success: true, data: user });
-  } catch (err) {
-    next(err);
+router.patch(
+  '/users/:id',
+  validateBody(
+    z.object({
+      role: z.enum(['STUDENT', 'ADMIN']).optional(),
+      isActive: z.boolean().optional(),
+    })
+  ),
+  async (req, res, next) => {
+    try {
+      const currentAdminId = (req as any).userId as string;
+      const targetUserId = req.params.id;
+
+      // Prevent admin from modifying their own role or status
+      if (targetUserId === currentAdminId) {
+        if (req.body.role !== undefined || req.body.isActive !== undefined) {
+          throw new AppError(
+            400,
+            'CANNOT_MODIFY_SELF',
+            'Tidak dapat mengubah role atau status akun sendiri'
+          );
+        }
+      }
+
+      const user = await prisma.user.update({
+        where: { id: targetUserId },
+        data: req.body,
+        select: { id: true, email: true, username: true, role: true, isActive: true },
+      });
+
+      // Revoke all sessions if user was deactivated
+      if (req.body.isActive === false) {
+        await authService.revokeAllSessions(user.id);
+      }
+
+      res.json({ success: true, data: user });
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 export default router;

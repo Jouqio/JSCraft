@@ -64,7 +64,7 @@ JSCraft adalah platform EdTech full-stack untuk belajar JavaScript dari nol samp
 | **Routing**   | React Router v6                                             |
 | **Backend**   | Node.js 20, Express 4, TypeScript                           |
 | **Database**  | PostgreSQL + Prisma ORM                                     |
-| **Auth**      | JWT — RS256 access token + opaque refresh (httpOnly cookie) |
+| **Auth**      | JWT — HS256 access token + opaque refresh (httpOnly cookie) |
 | **Email**     | Nodemailer (Resend / SMTP)                                  |
 | **AI**        | Anthropic Claude API                                        |
 | **Monorepo**  | Turborepo + npm workspaces                                  |
@@ -145,6 +145,21 @@ npm run dev
 | Student | budi@example.com  | `Student@123`  |
 
 ---
+
+## Deployment & Security Configuration
+
+### Reverse Proxy & `TRUST_PROXY`
+- **Default**: `TRUST_PROXY=false` (aman untuk local development langsung ke server).
+- **Railway / Production**: Set `TRUST_PROXY=1` di environment Railway. Railway menempatkan 1 reverse proxy di depan container. Nilai `1` memberi instruksi kepada Express untuk membaca IP klien dari hop pertama `X-Forwarded-For`, mencegah IP spoofing sekaligus memastikan rate limiter menghitung IP pengguna asli.
+- **Verifikasi Hop**: Buat request `curl -H "X-Forwarded-For: 203.0.113.195" https://api.yourdomain.com/v1/health` dan periksa IP yang dicatat morgan/rate limiter untuk memastikan IP tidak tertukar dengan proxy internal.
+
+### Cookie Policy (SameSite Lax & Domain)
+- Refresh token dikirimkan melalui cookie httpOnly dengan `SameSite=Lax` dan `Path=/v1/auth`.
+- **Syarat Domain**: Frontend Web dan Backend API **harus berada dalam satu situs / domain induk yang sama** (misal `jscraft.dev` dan `api.jscraft.dev`, atau reverse proxy routing `/` dan `/v1`). Jangan menggunakan domain berbeda level TLD (cross-site) karena browser akan memblokir pengiriman cookie Lax pada request POST cross-site.
+
+### Rate Limiting & Multi-Instance
+- Rate limiter backend menggunakan *in-memory store* secara bawaan.
+- **Catatan**: Penghitung rate limit bersifat lokal per-proses/container dan tidak dibagi antar instance horizontal kecuali dikonfigurasi menggunakan Redis store (`REDIS_URL`).
 
 ## Project Structure
 
@@ -307,7 +322,14 @@ VITE_API_URL=https://api.jscraft.dev/v1
 - **JWT** — opaque refresh token in httpOnly cookie; signed access token (15 min)
 - **Refresh rotation** — setiap penggunaan menghasilkan token pair baru
 - **Code execution** — iframe sandbox (`allow-scripts` only, no DOM access)
-- **Rate limiting** — 100 req/15min global, 10 req/15min pada auth routes
+- **Rate limiting**
+  - Global: 100 req/15 min per IP (kecuali `/health`)
+  - Login: dual limiter (`skipSuccessfulRequests: true`) — 10 gagal/15 min per IP+email dan 200 gagal/15 min per IP
+  - Register: 60 req/jam per IP (mendukung jaringan NAT/WiFi kelas bersama)
+  - Refresh token: 120 req/15 min per IP
+  - Forgot password: 5 req/jam per IP+email
+  - Reset password: 10 req/15 min per IP
+  - AI routes: 30 req/15 min per user
 - **Input validation** — Zod pada semua API endpoints
 - **SQL injection** — Prisma parameterized queries
 - **Headers** — Helmet.js (CSP, HSTS, X-Frame-Options)
@@ -317,7 +339,7 @@ VITE_API_URL=https://api.jscraft.dev/v1
 
 ## Roadmap
 
-### Phase 1 — Foundation ✅ (Current)
+### Phase 1 — Foundation [Selesai] (Current)
 
 - [x] Monorepo setup (Turborepo)
 - [x] Full TypeScript frontend + backend

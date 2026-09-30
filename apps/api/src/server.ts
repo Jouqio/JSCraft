@@ -8,7 +8,7 @@ import cron from 'node-cron';
 
 import { env } from './config/env.js';
 import { connectDB, disconnectDB } from './config/database.js';
-import { errorHandler } from './middleware/errorHandler.js';
+import { errorHandler, AppError } from './middleware/errorHandler.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { globalRateLimit } from './middleware/rateLimit.js';
 
@@ -22,8 +22,18 @@ import adminRouter from './routes/admin.js';
 import aiRouter from './routes/ai.js';
 import certificatesRouter from './routes/certificates.js';
 import { streakService } from './services/streakService.js';
+import { authService } from './services/authService.js';
 
 const app = express();
+
+// ── Trust Proxy ─────────────────────────────────────────────
+// Default is 'false'. On Railway / reverse proxies with 1 hop, set TRUST_PROXY=1.
+if (env.TRUST_PROXY === 'true' || env.TRUST_PROXY === '1') {
+  app.set('trust proxy', 1);
+} else if (env.TRUST_PROXY !== 'false' && env.TRUST_PROXY !== '0') {
+  const parsed = Number(env.TRUST_PROXY);
+  app.set('trust proxy', Number.isNaN(parsed) ? env.TRUST_PROXY : parsed);
+}
 
 // ── Security ───────────────────────────────────────────────
 app.use(
@@ -43,9 +53,31 @@ app.use(
 );
 
 // ── CORS ────────────────────────────────────────────────────
+const allowedOrigins = [
+  new URL(env.FRONTEND_URL).origin,
+  ...(env.ALLOWED_ORIGINS
+    ? env.ALLOWED_ORIGINS.split(',')
+      .map((o) => {
+        try {
+          return new URL(o.trim()).origin;
+        } catch {
+          return o.trim();
+        }
+      })
+      .filter(Boolean)
+    : []),
+];
+
 app.use(
   cors({
-    origin: env.FRONTEND_URL,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new AppError(403, 'FORBIDDEN_ORIGIN', 'Origin tidak diizinkan oleh CORS'));
+      }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -90,17 +122,20 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 // ── Cron jobs ────────────────────────────────────────────────
-// Midnight WIB (UTC+7 = 17:00 UTC) — reset broken streaks
+// Midnight WIB (UTC+7 = 17:00 UTC) — reset broken streaks and cleanup expired/revoked sessions
 if (env.ENABLE_CRON) {
   cron.schedule('0 17 * * *', async () => {
     try {
       const count = await streakService.resetExpiredStreaks();
       if (count > 0) console.log(`[cron] Reset ${count} expired streaks`);
+
+      const cleanedSessions = await authService.cleanupExpiredSessions();
+      if (cleanedSessions > 0) console.log(`[cron] Cleaned ${cleanedSessions} expired/revoked sessions`);
     } catch (err) {
-      console.error('[cron] streak reset failed:', err);
+      console.error('[cron] streak or session cleanup failed:', err);
     }
   });
-  console.log('[cron] Streak reset job scheduled (17:00 UTC / 00:00 WIB)');
+  console.log('[cron] Streak reset and session cleanup job scheduled (17:00 UTC / 00:00 WIB)');
 } else {
   console.log('[cron] Cron jobs disabled via ENABLE_CRON=false');
 }
@@ -110,7 +145,7 @@ async function main() {
   await connectDB();
 
   const server = app.listen(env.PORT, () => {
-    console.log(`\n🚀  JSCraft API`);
+    console.log(`\n  JSCraft API`);
     console.log(`    http://localhost:${env.PORT}/v1`);
     console.log(`    ENV: ${env.NODE_ENV}\n`);
   });

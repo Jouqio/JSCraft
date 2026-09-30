@@ -76,18 +76,23 @@ model User {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   userId       String
-  refreshToken String   @unique
+  refreshToken String    @unique
+  familyId     String    @default(cuid())
+  isRevoked    Boolean   @default(false)
+  revokedAt    DateTime?
   expiresAt    DateTime
   userAgent    String?
   ipAddress    String?
-  createdAt    DateTime @default(now())
+  createdAt    DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([refreshToken])
+  @@index([familyId])
+  @@index([expiresAt])
   @@map("sessions")
 }
 

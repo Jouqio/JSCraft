@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 import { Button } from '@components/ui/Button';
 import { Input } from '@components/ui/Input';
-import { api } from '@lib/api';
+import { apiPost } from '@lib/api';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -17,7 +17,7 @@ export default function ForgotPasswordPage() {
     if (!email) return;
     setLoading(true);
     try {
-      await api.post('/auth/forgot-password', { email });
+      await apiPost('/auth/forgot-password', { email });
       setSent(true);
     } catch {
       toast.error('Gagal mengirim email. Coba lagi.');

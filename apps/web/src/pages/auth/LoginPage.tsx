@@ -9,6 +9,7 @@ import { useAuthStore } from '@store/authStore';
 import { Button } from '@components/ui/Button';
 import { Input } from '@components/ui/Input';
 import { loginSchema, type LoginInput } from '@lib/validators';
+import { ApiClientError } from '@lib/api';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -41,9 +42,11 @@ export default function LoginPage() {
       navigate(from, { replace: true });
     } catch (err: unknown) {
       const msg =
-        axios.isAxiosError(err) && err.response?.data?.error?.message
-          ? (err.response.data.error.message as string)
-          : 'Login gagal. Coba lagi.';
+        err instanceof ApiClientError
+          ? err.message
+          : axios.isAxiosError(err) && err.response?.data?.error?.message
+            ? (err.response.data.error.message as string)
+            : 'Login gagal. Coba lagi.';
       toast.error(msg);
     } finally {
       setLoading(false);
