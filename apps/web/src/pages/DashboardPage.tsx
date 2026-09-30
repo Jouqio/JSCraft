@@ -7,6 +7,7 @@ import { useAuthStore } from '@store/authStore';
 import { useProgressStore } from '@store/progressStore';
 import { xpService, formatXP } from '@lib/xp';
 import { Button } from '@components/ui/Button';
+import { PageSpinner } from '@components/ui/Spinner';
 
 function StatCard({
   icon,
@@ -47,7 +48,9 @@ export default function DashboardPage() {
     syncFromServer();
   }, [syncFromServer]);
 
-  if (!user) return null;
+  if (!user) {
+    return <PageSpinner />;
+  }
 
   const levelInfo = xpService.levelFromXP(user.xpTotal);
   const completed = getCompletedCount();

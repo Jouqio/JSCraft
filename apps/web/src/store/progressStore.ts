@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
 import type { ProgressMap, ProgressStatus, StreakInfo } from '@jscraft/types';
-import { api } from '@lib/api';
+import { apiGet, apiPost } from '@lib/api';
 import { useAuthStore } from './authStore';
 
 interface ProgressState {
@@ -64,7 +64,7 @@ export const useProgressStore = create<ProgressState>()(
 
           const { isAuthenticated } = useAuthStore.getState();
           if (isAuthenticated) {
-            await api.post(`/progress/${lessonId}/start`).catch(() => {
+            await apiPost(`/progress/${lessonId}/start`).catch(() => {
               // Non-fatal — progress is still tracked locally
             });
           }
@@ -77,7 +77,7 @@ export const useProgressStore = create<ProgressState>()(
 
           if (isAuthenticated) {
             try {
-              const { data } = await api.post<{ xpEarned: number; streak: StreakInfo }>(
+              const data = await apiPost<{ xpEarned: number; streak: StreakInfo }>(
                 `/progress/${lessonId}/complete`
               );
               xpEarned = data.xpEarned;
@@ -111,7 +111,7 @@ export const useProgressStore = create<ProgressState>()(
 
           set({ isSyncing: true });
           try {
-            const { data } = await api.get<{ progress: ProgressMap; streak: StreakInfo }>(
+            const data = await apiGet<{ progress: ProgressMap; streak: StreakInfo }>(
               '/progress'
             );
             set({
@@ -119,6 +119,8 @@ export const useProgressStore = create<ProgressState>()(
               streak: data.streak,
               lastSyncedAt: new Date().toISOString(),
             });
+          } catch {
+            // Non-fatal sync
           } finally {
             set({ isSyncing: false });
           }
@@ -128,7 +130,7 @@ export const useProgressStore = create<ProgressState>()(
           const { isAuthenticated } = useAuthStore.getState();
           if (!isAuthenticated) return;
           try {
-            const { data } = await api.get<StreakInfo>('/progress/streak');
+            const data = await apiGet<StreakInfo>('/progress/streak');
             set({ streak: data });
           } catch {
             // Non-fatal

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, XCircle, Clock, Trophy, RotateCcw } from 'lucide-react';
 import type { Quiz, QuizOption } from '@jscraft/types';
-import { api } from '@lib/api';
+import { apiPost } from '@lib/api';
 import { cn } from '@lib/utils';
 import { Button } from '@components/ui/Button';
 import toast from 'react-hot-toast';
@@ -83,7 +83,13 @@ export default function QuizBlock({ quiz }: Props) {
         })),
         timeTaken: elapsed,
       };
-      const { data } = await api.post(`/quiz/${quiz.id}/attempt`, payload);
+      const data = await apiPost<{
+        score: number;
+        passed: boolean;
+        xpEarned: number;
+        correctCount: number;
+        totalCount: number;
+      }>(`/quiz/${quiz.id}/attempt`, payload);
       setResult(data);
       setPhase('result');
       if (data.passed) toast.success(`Kuis lulus! +${data.xpEarned} XP 🎉`);

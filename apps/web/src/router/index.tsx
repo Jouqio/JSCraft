@@ -24,10 +24,13 @@ const AdminUserManager = lazy(() => import('@pages/admin/UserManagerPage'));
 const AdminAnalytics = lazy(() => import('@pages/admin/AnalyticsPage'));
 const NotFoundPage = lazy(() => import('@pages/NotFoundPage'));
 
+import RootErrorBoundary from '@components/common/RootErrorBoundary';
+
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
+    errorElement: <RootErrorBoundary />,
     children: [
       // ── Public ────────────────────────────────────────────
       { index: true, element: <LandingPage /> },

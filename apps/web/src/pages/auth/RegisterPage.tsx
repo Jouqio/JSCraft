@@ -9,6 +9,7 @@ import axios from 'axios';
 import { Button } from '@components/ui/Button';
 import { Input } from '@components/ui/Input';
 import { registerSchema } from '@lib/validators';
+import { ApiClientError } from '@lib/api';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -51,9 +52,11 @@ export default function RegisterPage() {
       navigate('/dashboard');
     } catch (err: unknown) {
       const message =
-        axios.isAxiosError(err) && err.response?.data?.error?.message
-          ? (err.response.data.error.message as string)
-          : 'Pendaftaran gagal. Coba lagi.';
+        err instanceof ApiClientError
+          ? err.message
+          : axios.isAxiosError(err) && err.response?.data?.error?.message
+            ? (err.response.data.error.message as string)
+            : 'Pendaftaran gagal. Coba lagi.';
       toast.error(message);
     } finally {
       setLoading(false);

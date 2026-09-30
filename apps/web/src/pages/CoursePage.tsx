@@ -46,7 +46,8 @@ export default function CoursePage() {
       </div>
     );
 
-  const lessonIds = course.lessons.map((l) => l.id);
+  const lessons = Array.isArray(course.lessons) ? course.lessons : [];
+  const lessonIds = lessons.map((l) => l.id);
   const progress = courseProgress(lessonIds);
 
   return (
@@ -104,7 +105,12 @@ export default function CoursePage() {
 
         {/* Lesson list */}
         <div className="space-y-2">
-          {course.lessons.map((lesson, i) => {
+          {lessons.length === 0 ? (
+            <div className="rounded-xl border border-slate-200 bg-white p-8 text-center dark:border-slate-800 dark:bg-slate-900">
+              <p className="text-sm text-slate-500 dark:text-slate-400">Belum ada materi pelajaran untuk kursus ini.</p>
+            </div>
+          ) : (
+            lessons.map((lesson, i) => {
             const done = isCompleted(lesson.id);
             const typeLabel = { THEORY: 'Teori', PRACTICE: 'Praktik', PROJECT: 'Proyek' }[
               lesson.type
@@ -160,7 +166,8 @@ export default function CoursePage() {
                 </Link>
               </motion.div>
             );
-          })}
+          })
+        )}
         </div>
       </div>
     </>

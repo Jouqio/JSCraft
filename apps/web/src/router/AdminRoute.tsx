@@ -8,10 +8,10 @@ interface Props {
 }
 
 export default function AdminRoute({ children }: Props) {
-  const { user, isAuthenticated, isHydrating } = useAuthStore();
+  const { user, status } = useAuthStore();
 
-  if (isHydrating) return <PageSpinner />;
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (status === 'restoring') return <PageSpinner />;
+  if (status !== 'authenticated') return <Navigate to="/login" replace />;
   if (user?.role !== 'ADMIN') return <Navigate to="/dashboard" replace />;
 
   return <>{children}</>;

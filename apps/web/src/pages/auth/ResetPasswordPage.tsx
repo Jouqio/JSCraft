@@ -3,10 +3,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Lock, Eye, EyeOff } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import axios from 'axios';
 import { Button } from '@components/ui/Button';
 import { Input } from '@components/ui/Input';
-import { api } from '@lib/api';
+import { apiPost, ApiClientError } from '@lib/api';
 
 export default function ResetPasswordPage() {
   const [params] = useSearchParams();
@@ -29,13 +28,13 @@ export default function ResetPasswordPage() {
     }
     setLoading(true);
     try {
-      await api.post('/auth/reset-password', { token, password });
+      await apiPost('/auth/reset-password', { token, password });
       toast.success('Password berhasil direset! Silakan login.');
       navigate('/login');
     } catch (err: unknown) {
       const msg =
-        axios.isAxiosError(err) && err.response?.data?.error?.message
-          ? (err.response.data.error.message as string)
+        err instanceof ApiClientError
+          ? err.message
           : 'Gagal reset password.';
       toast.error(msg);
     } finally {

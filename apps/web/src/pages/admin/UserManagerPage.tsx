@@ -41,10 +41,11 @@ export default function UserManagerPage() {
       .finally(() => setLoading(false));
   }, [page, dSearch]);
 
+  const items = Array.isArray(data?.items) ? data.items : [];
   const filtered =
-    data?.items.filter(
+    items.filter(
       (u) => !dSearch || u.email.includes(dSearch) || u.username.includes(dSearch)
-    ) ?? [];
+    );
 
   return (
     <>
@@ -81,15 +82,22 @@ export default function UserManagerPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {loading
-                  ? Array.from({ length: 5 }).map((_, i) => (
-                      <tr key={i}>
-                        <td colSpan={6} className="px-4 py-3">
-                          <div className="skeleton h-4 w-full rounded" />
-                        </td>
-                      </tr>
-                    ))
-                  : filtered.map((u) => (
+                {loading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i}>
+                      <td colSpan={6} className="px-4 py-3">
+                        <div className="skeleton h-4 w-full rounded" />
+                      </td>
+                    </tr>
+                  ))
+                ) : filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-8 text-center text-sm text-slate-400">
+                      Tidak ada pengguna ditemukan.
+                    </td>
+                  </tr>
+                ) : (
+                  filtered.map((u) => (
                       <tr
                         key={u.id}
                         className="transition-colors hover:bg-slate-50 dark:hover:bg-slate-900/50"
@@ -134,7 +142,8 @@ export default function UserManagerPage() {
                           </Badge>
                         </td>
                       </tr>
-                    ))}
+                    ))
+                )}
               </tbody>
             </table>
           </div>

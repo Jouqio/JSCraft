@@ -53,8 +53,10 @@ export default function ProfilePage() {
   if (!profile)
     return <div className="py-20 text-center text-slate-500">Profil tidak ditemukan.</div>;
 
-  const completedLessons = profile._count.progress;
-  const earnedAchs = profile.achievements.filter((a) => a.earnedAt);
+  const completedLessons = profile._count?.progress ?? 0;
+  const earnedAchs = Array.isArray(profile.achievements)
+    ? profile.achievements.filter((a) => a.earnedAt)
+    : [];
 
   return (
     <>
