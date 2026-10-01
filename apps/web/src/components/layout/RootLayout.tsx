@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@store/authStore';
 import { useProgressStore } from '@store/progressStore';
 import { cn } from '@lib/utils';
@@ -13,6 +13,7 @@ const FOCUS_PATTERNS = [/^\/courses\/[^/]+\/[^/]+$/, /^\/playground$/];
 
 export default function RootLayout() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
   const { syncFromServer } = useProgressStore();
   const isBareRoute = BARE_ROUTES.some((r) => pathname.startsWith(r));
@@ -25,9 +26,20 @@ export default function RootLayout() {
     }
   }, [isAuthenticated, syncFromServer]);
 
-  // Scroll to top on route change
+  // Redirect authenticated users from '/' to '/dashboard'
+  useEffect(() => {
+    if (isAuthenticated && pathname === '/') {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, pathname, navigate]);
+
+  // Scroll to top on route change (both window and main scrollable container)
   useEffect(() => {
     window.scrollTo(0, 0);
+    const mainEl = document.getElementById('main-content');
+    if (mainEl) {
+      mainEl.scrollTo(0, 0);
+    }
   }, [pathname]);
 
   // Bare routes: no shell at all
@@ -38,7 +50,10 @@ export default function RootLayout() {
   // Anonymous: TopBar only, no sidebar or bottom nav
   if (!isAuthenticated) {
     return (
-      <div className="flex min-h-screen flex-col">
+      <div
+        className="flex min-h-screen flex-col"
+        style={{ backgroundColor: 'var(--color-paper)', color: 'var(--color-ink)' }}
+      >
         <a href="#main-content" className="skip-to-content">
           Lewati ke konten utama
         </a>
@@ -54,18 +69,25 @@ export default function RootLayout() {
   }
 
   // Authenticated: Sidebar (desktop/tablet) + TopBar + BottomNav (mobile)
+  // Shell h-dvh with independently scrolling content area and internal sidebar scroll
   return (
-    <div className="flex min-h-screen">
+    <div
+      className="flex h-dvh h-screen max-h-dvh max-h-screen overflow-hidden"
+      style={{ backgroundColor: 'var(--color-paper)', color: 'var(--color-ink)' }}
+    >
       <a href="#main-content" className="skip-to-content">
         Lewati ke konten utama
       </a>
       <AppSidebar />
 
-      <div className="shell-content flex min-h-screen flex-1 flex-col">
+      <div className="shell-content flex h-full min-w-0 flex-1 flex-col overflow-hidden">
         <TopBar />
         <main
           id="main-content"
-          className={cn('flex-1', !isFocusRoute && 'px-4 py-6 sm:px-6 lg:px-8')}
+          className={cn(
+            'min-h-0 flex-1 overflow-y-auto',
+            !isFocusRoute && 'px-4 py-6 sm:px-6 lg:px-8'
+          )}
         >
           <Outlet />
         </main>

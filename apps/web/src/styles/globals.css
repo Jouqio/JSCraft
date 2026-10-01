@@ -31,7 +31,7 @@
     /* Status (text -- dark-enough for >= 4.5:1 on paper) */
     --color-success-text: #15803d;
     --color-error-text: #b91c1c;
-    --color-warning-text: #a16207;
+    --color-warning-text: #a16207; /* yellow-700, bukan amber-700 */
 
     /* Code surface */
     --code-bg: #0f172a;
