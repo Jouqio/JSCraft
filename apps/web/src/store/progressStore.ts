@@ -40,12 +40,12 @@ export const useProgressStore = create<ProgressState>()(
         isSyncing: false,
 
         getLessonStatus: (lessonId) => {
-          const entry = get().progress[lessonId];
+          const entry = (get().progress || {})[lessonId];
           return entry?.status ?? 'NOT_STARTED';
         },
 
         getCompletedCount: () =>
-          Object.values(get().progress).filter((p) => p.status === 'COMPLETED').length,
+          Object.values(get().progress || {}).filter((p) => p?.status === 'COMPLETED').length,
 
         startLesson: async (lessonId, courseId) => {
           // Optimistic update
@@ -113,8 +113,8 @@ export const useProgressStore = create<ProgressState>()(
           try {
             const data = await apiGet<{ progress: ProgressMap; streak: StreakInfo }>('/progress');
             set({
-              progress: data.progress,
-              streak: data.streak,
+              progress: data?.progress ?? {},
+              streak: data?.streak ?? defaultStreak,
               lastSyncedAt: new Date().toISOString(),
             });
           } catch {

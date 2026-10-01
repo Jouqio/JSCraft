@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Code2, Zap, Trophy, BookOpen, CheckCircle, ArrowRight, Star } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
@@ -79,6 +79,10 @@ const ROADMAP = [
 export default function LandingPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   return (
     <>

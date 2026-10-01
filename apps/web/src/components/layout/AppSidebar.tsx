@@ -68,7 +68,7 @@ export default function AppSidebar() {
 
   return (
     <aside
-      className="sidebar-transition sticky top-0 z-30 hidden h-screen shrink-0 flex-col border-r sm:flex"
+      className="sidebar-transition sticky top-0 z-30 hidden h-full shrink-0 flex-col border-r sm:flex"
       style={{
         width,
         borderColor: 'var(--color-border)',
@@ -76,7 +76,10 @@ export default function AppSidebar() {
       }}
     >
       {/* ── Logo ── */}
-      <div className="flex items-center gap-2 px-4" style={{ height: 'var(--topbar-height)' }}>
+      <div
+        className="flex shrink-0 items-center gap-2 px-4"
+        style={{ height: 'var(--topbar-height)' }}
+      >
         <div className="from-brand-400 to-brand-600 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br">
           <Code2 className="h-4 w-4 text-white" strokeWidth={2.5} />
         </div>
@@ -90,8 +93,8 @@ export default function AppSidebar() {
         )}
       </div>
 
-      {/* ── Navigation ── */}
-      <nav className="mt-2 flex flex-1 flex-col gap-1 px-3">
+      {/* ── Navigation (scrollable if viewport height is small) ── */}
+      <nav className="mt-2 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto px-3">
         {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
@@ -135,7 +138,7 @@ export default function AppSidebar() {
       {!isFocusRoute && (
         <button
           onClick={toggleCollapse}
-          className="mx-3 mb-2 flex items-center justify-center rounded-lg p-2 transition-colors"
+          className="mx-3 mb-2 flex shrink-0 items-center justify-center rounded-lg p-2 transition-colors"
           style={{ color: 'var(--color-ink-muted)' }}
           aria-label={collapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'}
         >
@@ -144,7 +147,10 @@ export default function AppSidebar() {
       )}
 
       {/* ── Profile pill ── */}
-      <div className="relative border-t px-3 py-3" style={{ borderColor: 'var(--color-border)' }}>
+      <div
+        className="relative shrink-0 border-t px-3 py-3"
+        style={{ borderColor: 'var(--color-border)' }}
+      >
         <button
           onClick={() => setProfileOpen(!profileOpen)}
           className={cn(

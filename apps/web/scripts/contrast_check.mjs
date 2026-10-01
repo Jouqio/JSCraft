@@ -46,7 +46,7 @@ const LIGHT = {
   accentTextHigh: '#92400e',
   successText: '#15803d',
   errorText: '#b91c1c',
-  warningText: '#a16207',
+  warningText: '#a16207', // yellow-700, bukan amber-700
 };
 
 const DARK = {

@@ -220,11 +220,12 @@ export default function TopBar() {
             {resolvedTheme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
 
-          {/* Avatar menu */}
-          <div className="relative">
+          {/* Avatar menu -- mobile only (< sm) to prevent duplicate avatar on desktop/tablet */}
+          <div className="relative sm:hidden">
             <button
               onClick={() => setAvatarMenuOpen(!avatarMenuOpen)}
               className="flex items-center gap-2 rounded-xl p-1 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
+              aria-label="Menu pengguna"
             >
               <div className="from-brand-400 to-brand-600 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br text-xs font-bold text-white">
                 {user?.avatarUrl ? (
