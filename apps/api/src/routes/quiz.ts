@@ -78,7 +78,7 @@ router.get('/:lessonId', authenticate, async (req, res, next) => {
         type: q.type,
         order: q.order,
         options: Array.isArray(q.options)
-          ? (q.options as Array<{ id: string; text: string }>).map((opt) => ({
+          ? (q.options as Array<{ id: string; text: string }>).map((opt: { id: string; text: string }) => ({
               id: String(opt.id),
               text: String(opt.text ?? ''),
             }))

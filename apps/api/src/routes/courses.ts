@@ -182,7 +182,7 @@ router.get('/:slug/lessons/:lessonId', optionalAuth, async (req, res, next) => {
             type: q.type,
             order: q.order,
             options: Array.isArray(q.options)
-              ? (q.options as Array<{ id: string; text: string }>).map((opt) => ({
+              ? (q.options as Array<{ id: string; text: string }>).map((opt: { id: string; text: string }) => ({
                   id: String(opt.id),
                   text: String(opt.text ?? ''),
                 }))
@@ -200,8 +200,8 @@ router.get('/:slug/lessons/:lessonId', optionalAuth, async (req, res, next) => {
       xpReward: ex.xpReward,
       testCases: Array.isArray(ex.testCases)
         ? (ex.testCases as any[])
-            .filter((tc) => !tc.hidden && !tc.isHidden)
-            .map((tc) => ({
+            .filter((tc: any) => !tc.hidden && !tc.isHidden)
+            .map((tc: any) => ({
               description: String(tc.description ?? ''),
               expectedOutput: String(tc.expectedOutput ?? ''),
               ...(tc.input !== undefined ? { input: String(tc.input) } : {}),
