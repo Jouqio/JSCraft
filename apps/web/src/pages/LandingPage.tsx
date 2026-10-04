@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Code2, Zap, Trophy, BookOpen, CheckCircle, ArrowRight, Star } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { Button } from '@components/ui/Button';
+import { PageSpinner } from '@components/ui/Spinner';
 import { useAuthStore } from '@store/authStore';
 
 const fadeUp = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } };
@@ -78,9 +79,13 @@ const ROADMAP = [
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuthStore();
+  const { status, isAuthenticated } = useAuthStore();
 
-  if (isAuthenticated) {
+  if (status === 'restoring') {
+    return <PageSpinner />;
+  }
+
+  if (status === 'authenticated' || isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
   }
 

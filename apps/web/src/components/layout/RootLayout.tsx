@@ -38,7 +38,10 @@ export default function RootLayout() {
     window.scrollTo(0, 0);
     const mainEl = document.getElementById('main-content');
     if (mainEl) {
-      mainEl.scrollTo(0, 0);
+      mainEl.scrollTop = 0;
+      if (typeof mainEl.scrollTo === 'function') {
+        mainEl.scrollTo(0, 0);
+      }
     }
   }, [pathname]);
 
@@ -54,13 +57,23 @@ export default function RootLayout() {
         className="flex min-h-screen flex-col"
         style={{ backgroundColor: 'var(--color-paper)', color: 'var(--color-ink)' }}
       >
-        <a href="#main-content" className="skip-to-content">
+        <a
+          href="#main-content"
+          className="skip-to-content"
+          onClick={() => {
+            const mainEl = document.getElementById('main-content');
+            if (mainEl) {
+              mainEl.focus();
+            }
+          }}
+        >
           Lewati ke konten utama
         </a>
         <TopBar />
         <main
           id="main-content"
-          className={cn('flex-1', !isFocusRoute && 'px-4 py-6 sm:px-6 lg:px-8')}
+          tabIndex={-1}
+          className={cn('flex-1 focus:outline-none', !isFocusRoute && 'px-4 py-6 sm:px-6 lg:px-8')}
         >
           <Outlet />
         </main>
@@ -75,7 +88,16 @@ export default function RootLayout() {
       className="flex h-dvh h-screen max-h-dvh max-h-screen overflow-hidden"
       style={{ backgroundColor: 'var(--color-paper)', color: 'var(--color-ink)' }}
     >
-      <a href="#main-content" className="skip-to-content">
+      <a
+        href="#main-content"
+        className="skip-to-content"
+        onClick={() => {
+          const mainEl = document.getElementById('main-content');
+          if (mainEl) {
+            mainEl.focus();
+          }
+        }}
+      >
         Lewati ke konten utama
       </a>
       <AppSidebar />
@@ -84,8 +106,9 @@ export default function RootLayout() {
         <TopBar />
         <main
           id="main-content"
+          tabIndex={-1}
           className={cn(
-            'min-h-0 flex-1 overflow-y-auto',
+            'min-h-0 flex-1 overflow-y-auto focus:outline-none',
             !isFocusRoute && 'px-4 py-6 sm:px-6 lg:px-8'
           )}
         >

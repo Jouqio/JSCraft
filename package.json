@@ -15,6 +15,7 @@
     "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\" --ignore-path .gitignore",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "contrast:check": "node scripts/contrast_check.mjs",
     "clean": "turbo run clean && rm -rf node_modules",
     "db:generate": "turbo run db:generate",
     "db:push": "turbo run db:push",

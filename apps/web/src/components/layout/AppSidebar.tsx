@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -30,6 +30,21 @@ export default function AppSidebar() {
   const { user, logout } = useAuthStore();
   const [collapsed, setCollapsed] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const profileTriggerRef = useRef<HTMLButtonElement>(null);
+
+  // Close profile menu on Escape and restore focus to trigger button
+  useEffect(() => {
+    if (!profileOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setProfileOpen(false);
+        profileTriggerRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [profileOpen]);
 
   const isFocusRoute = FOCUS_PATTERNS.some((p) => p.test(pathname));
   const isTablet =
@@ -137,10 +152,12 @@ export default function AppSidebar() {
       {/* ── Collapse toggle ── */}
       {!isFocusRoute && (
         <button
+          id="sidebar-collapse-btn"
           onClick={toggleCollapse}
-          className="mx-3 mb-2 flex shrink-0 items-center justify-center rounded-lg p-2 transition-colors"
+          className="mx-3 mb-2 flex shrink-0 items-center justify-center rounded-lg p-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
           style={{ color: 'var(--color-ink-muted)' }}
           aria-label={collapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'}
+          aria-expanded={!collapsed}
         >
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </button>
@@ -152,9 +169,14 @@ export default function AppSidebar() {
         style={{ borderColor: 'var(--color-border)' }}
       >
         <button
+          ref={profileTriggerRef}
+          id="sidebar-profile-btn"
           onClick={() => setProfileOpen(!profileOpen)}
+          aria-haspopup="menu"
+          aria-expanded={profileOpen}
+          aria-label="Menu profil pengguna"
           className={cn(
-            'flex w-full items-center gap-3 rounded-xl p-2 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800',
+            'flex w-full items-center gap-3 rounded-xl p-2 transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 dark:hover:bg-slate-800',
             collapsed && 'justify-center'
           )}
         >
@@ -186,6 +208,8 @@ export default function AppSidebar() {
             <>
               <div className="fixed inset-0 z-10" onClick={() => setProfileOpen(false)} />
               <motion.div
+                role="menu"
+                aria-label="Opsi profil"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 8 }}
@@ -194,15 +218,17 @@ export default function AppSidebar() {
               >
                 <NavLink
                   to="/profile"
+                  role="menuitem"
                   onClick={() => setProfileOpen(false)}
-                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 dark:hover:bg-slate-800"
                   style={{ color: 'var(--color-ink)' }}
                 >
                   <User className="h-4 w-4" /> Profil Saya
                 </NavLink>
                 <button
+                  role="menuitem"
                   onClick={handleLogout}
-                  className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                  className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 dark:text-red-400 dark:hover:bg-red-900/20"
                 >
                   <LogOut className="h-4 w-4" /> Keluar
                 </button>
