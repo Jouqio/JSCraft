@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronRight,
@@ -13,7 +13,7 @@ import {
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 import type { Lesson, ContentSection } from '@jscraft/types';
-import { apiGet } from '@lib/api';
+import { apiGet, ApiClientError } from '@lib/api';
 import { useProgressStore } from '@store/progressStore';
 import { useEditorStore } from '@store/editorStore';
 import { cn } from '@lib/utils';
@@ -82,8 +82,11 @@ function ContentRenderer({ sections }: { sections: ContentSection[] }) {
 export default function LessonPage() {
   const { slug, lessonId } = useParams<{ slug: string; lessonId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
+  const [errorStatus, setErrorStatus] = useState<number | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('materi');
   const [mobilePanel, setMobilePanel] = useState<'materi' | 'editor'>('materi');
   const [completing, setCompleting] = useState(false);
@@ -96,6 +99,8 @@ export default function LessonPage() {
   useEffect(() => {
     if (!slug || !lessonId) return;
     setLoading(true);
+    setErrorStatus(null);
+    setErrorMessage(null);
     apiGet<Lesson>(`/courses/${slug}/lessons/${lessonId}`)
       .then((data) => {
         setLesson(data);
@@ -103,7 +108,14 @@ export default function LessonPage() {
         setStarterCode(starter);
         startLesson(lessonId, data.courseId);
       })
-      .catch(() => toast.error('Gagal memuat pelajaran'))
+      .catch((err) => {
+        if (err instanceof ApiClientError && err.status === 401) {
+          setErrorStatus(401);
+          setErrorMessage(err.message || 'Pelajaran ini membutuhkan login untuk diakses');
+        } else {
+          toast.error('Gagal memuat pelajaran');
+        }
+      })
       .finally(() => setLoading(false));
   }, [slug, lessonId, setStarterCode, startLesson]);
 
@@ -131,6 +143,32 @@ export default function LessonPage() {
         <Spinner size="lg" />
       </div>
     );
+
+  if (errorStatus === 401)
+    return (
+      <div className="flex min-h-[60vh] flex-1 items-center justify-center p-6">
+        <div className="card max-w-md p-8 text-center space-y-4">
+          <div className="bg-amber-100 dark:bg-amber-900/30 mx-auto flex h-14 w-14 items-center justify-center rounded-2xl">
+            <Zap className="h-7 w-7 text-amber-600 dark:text-amber-400" />
+          </div>
+          <h2 className="font-heading text-xl font-bold text-slate-900 dark:text-white">
+            Wajib Masuk Akun
+          </h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            {errorMessage ?? 'Pelajaran ini membutuhkan login untuk diakses.'}
+          </p>
+          <div className="flex justify-center gap-3 pt-2">
+            <Link to="/courses">
+              <Button variant="outline">Kembali ke Kursus</Button>
+            </Link>
+            <Link to={`/login?redirect=${encodeURIComponent(location.pathname)}`}>
+              <Button>Masuk Sekarang</Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+
   if (!lesson)
     return (
       <div className="flex min-h-[60vh] flex-1 items-center justify-center">
