@@ -42,7 +42,14 @@ router.get('/:lessonId', authenticate, async (req, res, next) => {
   try {
     const quiz = await prisma.quiz.findUnique({
       where: { lessonId: req.params.lessonId },
-      include: {
+      select: {
+        id: true,
+        lessonId: true,
+        title: true,
+        timeLimit: true,
+        passingScore: true,
+        createdAt: true,
+        updatedAt: true,
         questions: {
           orderBy: { order: 'asc' },
           select: {
@@ -50,7 +57,7 @@ router.get('/:lessonId', authenticate, async (req, res, next) => {
             text: true,
             type: true,
             order: true,
-            options: true, // isCorrect stripped below
+            options: true,
           },
         },
       },
@@ -58,12 +65,24 @@ router.get('/:lessonId', authenticate, async (req, res, next) => {
     if (!quiz) throw new AppError(404, 'NOT_FOUND', 'Kuis tidak ditemukan');
 
     const sanitized = {
-      ...quiz,
+      id: quiz.id,
+      lessonId: quiz.lessonId,
+      title: quiz.title,
+      timeLimit: quiz.timeLimit,
+      passingScore: quiz.passingScore,
+      createdAt: quiz.createdAt,
+      updatedAt: quiz.updatedAt,
       questions: quiz.questions.map((q: (typeof quiz.questions)[0]) => ({
-        ...q,
-        options: (q.options as any[]).map(
-          ({ isCorrect: _ic, ...opt }: { isCorrect: boolean; id: string; text: string }) => opt
-        ),
+        id: q.id,
+        text: q.text,
+        type: q.type,
+        order: q.order,
+        options: Array.isArray(q.options)
+          ? (q.options as Array<{ id: string; text: string }>).map((opt) => ({
+              id: String(opt.id),
+              text: String(opt.text ?? ''),
+            }))
+          : [],
       })),
     };
 
@@ -82,24 +101,78 @@ router.post('/:id/attempt', authenticate, validateBody(submitSchema), async (req
     const quiz = await prisma.quiz.findUnique({
       where: { id: req.params.id },
       include: {
-        questions: { select: { id: true, options: true } },
+        questions: {
+          orderBy: { order: 'asc' },
+          select: { id: true, options: true, explanation: true },
+        },
       },
     });
     if (!quiz) throw new AppError(404, 'NOT_FOUND', 'Kuis tidak ditemukan');
 
-    // Grade answers
-    let correctCount = 0;
-    for (const answer of answers) {
-      const question = quiz.questions.find(
-        (q: (typeof quiz.questions)[0]) => q.id === answer.questionId
-      );
-      if (!question) continue;
-      const options = question.options as Array<{ id: string; isCorrect: boolean }>;
-      const selected = options.find(
-        (o: { id: string; isCorrect: boolean }) => o.id === answer.selectedOptionId
-      );
-      if (selected?.isCorrect) correctCount++;
+    // 1. Batasi jumlah jawaban agar tidak melebihi jumlah pertanyaan kuis
+    if (answers.length > quiz.questions.length) {
+      throw new AppError(400, 'BAD_REQUEST', 'Jumlah jawaban melebihi jumlah pertanyaan');
     }
+
+    // 2. Cegah duplikasi questionId dalam satu submisi
+    const answeredQuestionIds = new Set<string>();
+    for (const ans of answers) {
+      if (answeredQuestionIds.has(ans.questionId)) {
+        throw new AppError(400, 'BAD_REQUEST', 'Pertanyaan dijawab lebih dari satu kali');
+      }
+      answeredQuestionIds.add(ans.questionId);
+    }
+
+    // 3. Validasi questionId dan tolak selectedOptionId yang bukan milik soal
+    for (const ans of answers) {
+      const question = quiz.questions.find((q: (typeof quiz.questions)[0]) => q.id === ans.questionId);
+      if (!question) {
+        throw new AppError(400, 'BAD_REQUEST', `Pertanyaan ${ans.questionId} tidak valid untuk kuis ini`);
+      }
+      const options = question.options as Array<{ id: string; text: string; isCorrect: boolean }>;
+      const optionExists = options.some((o) => o.id === ans.selectedOptionId);
+      if (!optionExists) {
+        throw new AppError(
+          400,
+          'BAD_REQUEST',
+          `Pilihan ${ans.selectedOptionId} tidak valid untuk pertanyaan ${ans.questionId}`
+        );
+      }
+    }
+
+    // 4. Mencegah kirim ganda (idempotency / cooldown guard 3 detik)
+    const recentAttempt = await prisma.quizAttempt.findFirst({
+      where: {
+        userId,
+        quizId: quiz.id,
+        createdAt: { gte: new Date(Date.now() - 3000) },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    if (recentAttempt) {
+      throw new AppError(429, 'TOO_MANY_REQUESTS', 'Percobaan kuis sedang diproses. Mohon tunggu sejenak.');
+    }
+
+    // 5. Grade answers di sisi server (mengabaikan skor/isCorrect dari klien)
+    let correctCount = 0;
+    const results = quiz.questions.map((question: (typeof quiz.questions)[0]) => {
+      const userAnswer = answers.find((a) => a.questionId === question.id);
+      const options = question.options as Array<{ id: string; text: string; isCorrect: boolean }>;
+      const correctOption = options.find((o) => o.isCorrect);
+      const isCorrect = Boolean(
+        userAnswer && correctOption && userAnswer.selectedOptionId === correctOption.id
+      );
+
+      if (isCorrect) correctCount++;
+
+      return {
+        questionId: question.id,
+        selectedOptionId: userAnswer?.selectedOptionId ?? null,
+        isCorrect,
+        correctOptionId: correctOption?.id ?? '',
+        explanation: question.explanation ?? null,
+      };
+    });
 
     const score = Math.round((correctCount / quiz.questions.length) * 100);
     const passed = score >= quiz.passingScore;
@@ -125,6 +198,7 @@ router.post('/:id/attempt', authenticate, validateBody(submitSchema), async (req
         totalCount: quiz.questions.length,
         timeTaken,
         attemptId: attempt.id,
+        results,
       },
     });
   } catch (err) {

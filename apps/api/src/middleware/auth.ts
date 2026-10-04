@@ -79,7 +79,7 @@ export const requireAdmin = (req: Request, _res: Response, next: NextFunction): 
   next();
 };
 
-/** Optional auth — attaches user info if token present, otherwise continues */
+/** Optional auth — attaches user info if valid token present, otherwise treats as anonymous guest */
 export const optionalAuth = async (
   req: Request,
   _res: Response,
@@ -90,5 +90,27 @@ export const optionalAuth = async (
     next();
     return;
   }
-  return authenticate(req, _res, next);
+
+  try {
+    const token = authHeader.slice(7);
+    const payload = jwt.verify(token, env.JWT_ACCESS_SECRET, {
+      algorithms: ['HS256'],
+      issuer: 'jscraft-api',
+      audience: 'jscraft-app',
+    }) as JWTPayload;
+
+    const user = await prisma.user.findUnique({
+      where: { id: payload.sub },
+      select: { id: true, role: true, isActive: true },
+    });
+
+    if (user && user.isActive) {
+      (req as AuthenticatedRequest).userId = user.id;
+      (req as AuthenticatedRequest).userRole = user.role;
+    }
+  } catch {
+    // Expired, invalid, or malformed tokens in optional auth routes are treated as anonymous guest without error
+  }
+
+  next();
 };

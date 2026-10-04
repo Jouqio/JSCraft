@@ -24,7 +24,26 @@ router.get('/:lessonId', async (req, res, next) => {
         testCases: true,
       },
     });
-    res.json({ success: true, data: exercises });
+
+    const sanitizedExercises = exercises.map((ex) => ({
+      id: ex.id,
+      title: ex.title,
+      description: ex.description,
+      starterCode: ex.starterCode,
+      hints: ex.hints,
+      xpReward: ex.xpReward,
+      testCases: Array.isArray(ex.testCases)
+        ? (ex.testCases as any[])
+            .filter((tc) => !tc.hidden && !tc.isHidden)
+            .map((tc) => ({
+              description: String(tc.description ?? ''),
+              expectedOutput: String(tc.expectedOutput ?? ''),
+              ...(tc.input !== undefined ? { input: String(tc.input) } : {}),
+            }))
+        : [],
+    }));
+
+    res.json({ success: true, data: sanitizedExercises });
   } catch (err) {
     next(err);
   }
