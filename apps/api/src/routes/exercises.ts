@@ -3,8 +3,9 @@ import { z } from 'zod';
 import { prisma } from '../config/database.js';
 import { authenticate } from '../middleware/auth.js';
 import { validateBody } from '../middleware/validate.js';
-import { xpService, XP_REWARDS } from '../services/xpService.js';
+import { xpService } from '../services/xpService.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { runExerciseCode, type TestCase } from '../services/codeRunner.js';
 
 const router = Router();
 
@@ -56,16 +57,53 @@ router.post(
   validateBody(z.object({ code: z.string().max(10000) })),
   async (req, res, next) => {
     try {
-      const exercise = await prisma.exercise.findUnique({ where: { id: req.params.id } });
+      const userId = (req as any).userId as string;
+      const { code } = req.body as { code: string };
+
+      const exercise = await prisma.exercise.findUnique({
+        where: { id: req.params.id },
+      });
       if (!exercise) throw new AppError(404, 'NOT_FOUND', 'Latihan tidak ditemukan');
 
-      // NOTE: Real code execution happens in a sandboxed worker process.
-      // For now we return a placeholder — implement with vm2 or isolated-vm in production.
-      await xpService.awardXP((req as any).userId, XP_REWARDS.exercise_complete);
+      const rawTestCases = Array.isArray(exercise.testCases)
+        ? (exercise.testCases as unknown as TestCase[])
+        : [];
+
+      // Execute code against test cases in isolated sandbox
+      const runResult = runExerciseCode(code, rawTestCases);
+
+      // Check if user has already passed this exercise before (XP idempotency)
+      const previousPassed = await prisma.exerciseAttempt.findFirst({
+        where: { userId, exerciseId: exercise.id, passed: true },
+      });
+
+      let xpEarned = 0;
+      if (runResult.passed && !previousPassed) {
+        xpEarned = exercise.xpReward;
+        await xpService.awardXP(userId, xpEarned);
+      }
+
+      await prisma.exerciseAttempt.create({
+        data: {
+          userId,
+          exerciseId: exercise.id,
+          code,
+          passed: runResult.passed,
+          xpEarned,
+          results: runResult.results as any,
+        },
+      });
 
       res.json({
         success: true,
-        data: { passed: true, xpEarned: exercise.xpReward, results: [] },
+        data: {
+          passed: runResult.passed,
+          xpEarned,
+          totalTests: runResult.totalTests,
+          passedTests: runResult.passedTests,
+          results: runResult.results,
+          output: runResult.output,
+        },
       });
     } catch (err) {
       next(err);

@@ -26,6 +26,7 @@ import CodeEditor from '@components/editor/CodeEditor';
 import ConsoleOutput from '@components/editor/ConsoleOutput';
 import QuizBlock from '@components/lesson/QuizBlock';
 import NotesPanel from '@components/lesson/NotesPanel';
+import ExerciseBlock from '@components/lesson/ExerciseBlock';
 
 type Tab = 'materi' | 'latihan' | 'kuis' | 'catatan';
 
@@ -382,34 +383,14 @@ export default function LessonPage() {
                 )}
 
                 {activeTab === 'latihan' && (
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     <p className="text-sm text-slate-600 dark:text-slate-400">
-                      Gunakan editor di sebelah kanan untuk latihan. Klik <strong>Run</strong> untuk
-                      menjalankan kode.
+                      Gunakan editor di sebelah kanan untuk menulis solusi. Klik{' '}
+                      <strong>Periksa Jawaban</strong> untuk menguji kode Anda terhadap seluruh
+                      kasus uji.
                     </p>
                     {lesson.exercises && lesson.exercises.length > 0 ? (
-                      lesson.exercises.map((ex) => (
-                        <div key={ex.id} className="card p-5">
-                          <h3 className="mb-2 font-semibold text-slate-900 dark:text-white">
-                            {ex.title}
-                          </h3>
-                          <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
-                            {ex.description}
-                          </p>
-                          {ex.hints && (ex.hints as string[]).length > 0 && (
-                            <details className="text-sm">
-                              <summary className="text-brand-600 dark:text-brand-400 cursor-pointer font-medium">
-                                💡 Lihat petunjuk
-                              </summary>
-                              <ul className="mt-2 space-y-1 text-slate-500 dark:text-slate-400">
-                                {(ex.hints as string[]).map((h, i) => (
-                                  <li key={i}>• {h}</li>
-                                ))}
-                              </ul>
-                            </details>
-                          )}
-                        </div>
-                      ))
+                      lesson.exercises.map((ex) => <ExerciseBlock key={ex.id} exercise={ex} />)
                     ) : (
                       <p className="text-sm italic text-slate-400">
                         Belum ada latihan untuk pelajaran ini.
