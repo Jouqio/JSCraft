@@ -215,6 +215,19 @@ export async function apiPatch<T>(
   }
 }
 
+export async function apiPut<T>(
+  url: string,
+  data?: unknown,
+  config?: AxiosRequestConfig
+): Promise<T> {
+  try {
+    const res = await api.put<unknown>(url, data, config);
+    return unwrapEnvelope<T>(res);
+  } catch (err) {
+    handleAxiosError(err);
+  }
+}
+
 export async function apiDel<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
   try {
     const res = await api.delete<unknown>(url, config);

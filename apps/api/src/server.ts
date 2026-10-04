@@ -21,6 +21,8 @@ import profileRouter from './routes/profile.js';
 import adminRouter from './routes/admin.js';
 import aiRouter from './routes/ai.js';
 import certificatesRouter from './routes/certificates.js';
+import notesRouter from './routes/notes.js';
+import bookmarksRouter from './routes/bookmarks.js';
 import { streakService } from './services/streakService.js';
 import { authService } from './services/authService.js';
 
@@ -114,6 +116,8 @@ v1.use('/profile', profileRouter);
 v1.use('/admin', adminRouter);
 v1.use('/ai', aiRouter);
 v1.use('/certificates', certificatesRouter);
+v1.use('/notes', notesRouter);
+v1.use('/bookmarks', bookmarksRouter);
 
 app.use('/v1', v1);
 
