@@ -190,9 +190,15 @@ router.post('/:id/attempt', authenticate, validateBody(submitSchema), async (req
     const passed = score >= quiz.passingScore;
     const isPerfect = score === 100;
 
+    const previousPassedAttempt = await prisma.quizAttempt.findFirst({
+      where: { userId, quizId: quiz.id, passed: true },
+    });
+
     let xpEarned = 0;
-    if (passed) xpEarned += XP_REWARDS.quiz_pass;
-    if (isPerfect) xpEarned += XP_REWARDS.quiz_perfect - XP_REWARDS.quiz_pass; // additive
+    if (passed && !previousPassedAttempt) {
+      xpEarned += XP_REWARDS.quiz_pass;
+      if (isPerfect) xpEarned += XP_REWARDS.quiz_perfect - XP_REWARDS.quiz_pass; // additive
+    }
 
     if (xpEarned > 0) await xpService.awardXP(userId, xpEarned);
 

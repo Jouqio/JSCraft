@@ -40,17 +40,17 @@ enum QuestionType {
 // ── Models ─────────────────────────────────────────────────
 
 model User {
-  id           String    @id @default(cuid())
-  email        String    @unique
-  username     String    @unique
+  id           String   @id @default(cuid())
+  email        String   @unique
+  username     String   @unique
   passwordHash String
   displayName  String?
   avatarUrl    String?
-  role         Role      @default(STUDENT)
-  isVerified   Boolean   @default(false)
-  isActive     Boolean   @default(true)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  role         Role     @default(STUDENT)
+  isVerified   Boolean  @default(false)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   // Gamification
   xpTotal       Int       @default(0)
@@ -60,14 +60,15 @@ model User {
   lastActiveAt  DateTime?
 
   // Relations
-  sessions      Session[]
-  progress      Progress[]
-  quizAttempts  QuizAttempt[]
-  achievements  UserAchievement[]
-  notes         Note[]
-  bookmarks     Bookmark[]
-  certificates  Certificate[]
-  passwordResets PasswordReset[]
+  sessions         Session[]
+  progress         Progress[]
+  quizAttempts     QuizAttempt[]
+  achievements     UserAchievement[]
+  notes            Note[]
+  bookmarks        Bookmark[]
+  certificates     Certificate[]
+  passwordResets   PasswordReset[]
+  exerciseAttempts ExerciseAttempt[]
 
   @@index([email])
   @@index([username])
@@ -97,12 +98,12 @@ model Session {
 }
 
 model PasswordReset {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   userId    String
-  token     String   @unique
+  token     String    @unique
   expiresAt DateTime
   usedAt    DateTime?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -111,23 +112,23 @@ model PasswordReset {
 }
 
 model Course {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  title       String
-  titleId     String
-  description String
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  title         String
+  titleId       String
+  description   String
   descriptionId String?
-  phase       Int
-  week        Int
-  order       Int
-  isPublished Boolean  @default(false)
-  isPremium   Boolean  @default(false)
-  thumbnailUrl String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  phase         Int
+  week          Int
+  order         Int
+  isPublished   Boolean  @default(false)
+  isPremium     Boolean  @default(false)
+  thumbnailUrl  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  lessons   Lesson[]
-  progress  Progress[]
+  lessons  Lesson[]
+  progress Progress[]
 
   @@index([slug])
   @@index([phase, week, order])
@@ -188,11 +189,11 @@ model Progress {
 }
 
 model Quiz {
-  id           String  @id @default(cuid())
-  lessonId     String  @unique
+  id           String   @id @default(cuid())
+  lessonId     String   @unique
   title        String
   timeLimit    Int?
-  passingScore Int     @default(70)
+  passingScore Int      @default(70)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -250,10 +251,30 @@ model Exercise {
   order       Int      @default(0)
   createdAt   DateTime @default(now())
 
-  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lesson   Lesson            @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  attempts ExerciseAttempt[]
 
   @@index([lessonId])
   @@map("exercises")
+}
+
+model ExerciseAttempt {
+  id         String   @id @default(cuid())
+  userId     String
+  exerciseId String
+  code       String
+  passed     Boolean
+  xpEarned   Int      @default(0)
+  results    Json
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercise Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([exerciseId])
+  @@index([passed])
+  @@map("exercise_attempts")
 }
 
 model Achievement {
@@ -311,11 +332,11 @@ model Bookmark {
 }
 
 model Certificate {
-  id          String   @id @default(cuid())
-  userId      String
-  courseSlug  String
-  issuedAt    DateTime @default(now())
-  verifyCode  String   @unique @default(cuid())
+  id         String   @id @default(cuid())
+  userId     String
+  courseSlug String
+  issuedAt   DateTime @default(now())
+  verifyCode String   @unique @default(cuid())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

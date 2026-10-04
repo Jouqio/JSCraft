@@ -266,3 +266,22 @@ export interface Bookmark {
     };
   };
 }
+
+// ── Exercises ────────────────────────────────────────────────────────────────
+export interface ExerciseTestCaseResult {
+  description: string;
+  passed: boolean;
+  expectedOutput?: string;
+  actualOutput?: string;
+  error?: string;
+  hidden?: boolean;
+}
+
+export interface ExerciseSubmitResponse {
+  passed: boolean;
+  xpEarned: number;
+  totalTests: number;
+  passedTests: number;
+  results: ExerciseTestCaseResult[];
+  output: string[];
+}
