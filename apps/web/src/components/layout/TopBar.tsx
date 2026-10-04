@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Code2, BookOpen, Trophy, Sun, Moon, Menu, X, LogOut, User } from 'lucide-react';
@@ -20,6 +20,36 @@ export default function TopBar() {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
+  const mobileMenuTriggerRef = useRef<HTMLButtonElement>(null);
+  const avatarTriggerRef = useRef<HTMLButtonElement>(null);
+
+  // Close avatar menu on Escape and restore focus
+  useEffect(() => {
+    if (!avatarMenuOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setAvatarMenuOpen(false);
+        avatarTriggerRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [avatarMenuOpen]);
+
+  // Close mobile nav menu on Escape and restore focus
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setMobileMenuOpen(false);
+        mobileMenuTriggerRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mobileMenuOpen]);
 
   const toggleTheme = () => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
   const handleLogout = async () => {
@@ -102,10 +132,14 @@ export default function TopBar() {
 
             {/* Mobile hamburger */}
             <button
-              className="rounded-lg p-2 transition-colors hover:bg-slate-100 md:hidden dark:hover:bg-slate-800"
+              ref={mobileMenuTriggerRef}
+              id="topbar-hamburger-btn"
+              className="rounded-lg p-2 transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 md:hidden dark:hover:bg-slate-800"
               style={{ color: 'var(--color-ink-muted)' }}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Menu navigasi"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-nav-menu"
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
@@ -223,9 +257,13 @@ export default function TopBar() {
           {/* Avatar menu -- mobile only (< sm) to prevent duplicate avatar on desktop/tablet */}
           <div className="relative sm:hidden">
             <button
+              ref={avatarTriggerRef}
+              id="topbar-avatar-btn"
               onClick={() => setAvatarMenuOpen(!avatarMenuOpen)}
-              className="flex items-center gap-2 rounded-xl p-1 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="flex items-center gap-2 rounded-xl p-1 transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 dark:hover:bg-slate-800"
               aria-label="Menu pengguna"
+              aria-haspopup="menu"
+              aria-expanded={avatarMenuOpen}
             >
               <div className="from-brand-400 to-brand-600 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br text-xs font-bold text-white">
                 {user?.avatarUrl ? (
@@ -245,6 +283,8 @@ export default function TopBar() {
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setAvatarMenuOpen(false)} />
                   <motion.div
+                    role="menu"
+                    aria-label="Opsi pengguna"
                     initial={{ opacity: 0, scale: 0.95, y: -4 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: -4 }}
@@ -269,15 +309,17 @@ export default function TopBar() {
                     <div className="p-1">
                       <Link
                         to="/profile"
+                        role="menuitem"
                         onClick={() => setAvatarMenuOpen(false)}
-                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
+                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 dark:hover:bg-slate-800"
                         style={{ color: 'var(--color-ink)' }}
                       >
                         <User className="h-4 w-4" /> Profil Saya
                       </Link>
                       <button
+                        role="menuitem"
                         onClick={handleLogout}
-                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 dark:text-red-400 dark:hover:bg-red-900/20"
                       >
                         <LogOut className="h-4 w-4" /> Keluar
                       </button>
