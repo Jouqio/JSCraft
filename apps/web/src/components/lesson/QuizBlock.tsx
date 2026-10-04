@@ -159,7 +159,7 @@ export default function QuizBlock({ quiz }: Props) {
         animate={{ opacity: 1, scale: 1 }}
         className="card space-y-6 p-6"
       >
-        <div className="text-center space-y-4">
+        <div className="space-y-4 text-center">
           <div
             className={cn(
               'mx-auto flex h-16 w-16 items-center justify-center rounded-2xl',
@@ -203,8 +203,8 @@ export default function QuizBlock({ quiz }: Props) {
         </div>
 
         {/* Server-validated review per question */}
-        <div className="border-t border-slate-200 pt-6 dark:border-slate-800 space-y-5 text-left">
-          <h4 className="font-semibold text-sm text-slate-700 dark:text-slate-300">
+        <div className="space-y-5 border-t border-slate-200 pt-6 text-left dark:border-slate-800">
+          <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
             Pembahasan Soal:
           </h4>
           {quiz.questions.map((q, idx) => {
@@ -212,11 +212,21 @@ export default function QuizBlock({ quiz }: Props) {
             const userChoice = answers[q.id];
 
             return (
-              <div key={q.id} className="rounded-xl border border-slate-200 p-4 dark:border-slate-800 space-y-3">
-                <div className="flex items-center justify-between text-xs font-mono text-slate-500">
-                  <span>Soal {idx + 1} dari {quiz.questions.length}</span>
+              <div
+                key={q.id}
+                className="space-y-3 rounded-xl border border-slate-200 p-4 dark:border-slate-800"
+              >
+                <div className="flex items-center justify-between font-mono text-xs text-slate-500">
+                  <span>
+                    Soal {idx + 1} dari {quiz.questions.length}
+                  </span>
                   {rev && (
-                    <span className={cn('font-semibold', rev.correct ? 'text-emerald-600' : 'text-red-500')}>
+                    <span
+                      className={cn(
+                        'font-semibold',
+                        rev.correct ? 'text-emerald-600' : 'text-red-500'
+                      )}
+                    >
                       {rev.correct ? '✓ Benar' : '✗ Salah'}
                     </span>
                   )}
@@ -231,17 +241,19 @@ export default function QuizBlock({ quiz }: Props) {
                       <div
                         key={opt.id}
                         className={cn(
-                          'rounded-lg px-3 py-2 border flex items-center justify-between',
+                          'flex items-center justify-between rounded-lg border px-3 py-2',
                           isCorrectAnswer
                             ? 'border-emerald-400 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300'
                             : isChosen && !isCorrectAnswer
-                            ? 'border-red-400 bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300'
-                            : 'border-slate-200 text-slate-600 dark:border-slate-700 dark:text-slate-400'
+                              ? 'border-red-400 bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300'
+                              : 'border-slate-200 text-slate-600 dark:border-slate-700 dark:text-slate-400'
                         )}
                       >
                         <span>{opt.text}</span>
                         {isCorrectAnswer && <span className="font-semibold">Jawaban Benar</span>}
-                        {isChosen && !isCorrectAnswer && <span className="font-semibold">Jawaban Anda</span>}
+                        {isChosen && !isCorrectAnswer && (
+                          <span className="font-semibold">Jawaban Anda</span>
+                        )}
                       </div>
                     );
                   })}
@@ -311,10 +323,10 @@ export default function QuizBlock({ quiz }: Props) {
                   key={opt.id}
                   onClick={() => handleSelect(opt.id)}
                   className={cn(
-                    'w-full rounded-xl border px-4 py-3 text-left text-sm font-medium transition-all duration-150 cursor-pointer',
+                    'w-full cursor-pointer rounded-xl border px-4 py-3 text-left text-sm font-medium transition-all duration-150',
                     isSelected
-                      ? 'border-brand-500 bg-brand-50 text-brand-900 shadow-sm dark:border-brand-400 dark:bg-brand-900/30 dark:text-brand-200'
-                      : 'border-slate-200 text-slate-700 hover:border-brand-300 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800/50'
+                      ? 'border-brand-500 bg-brand-50 text-brand-900 dark:border-brand-400 dark:bg-brand-900/30 dark:text-brand-200 shadow-sm'
+                      : 'hover:border-brand-300 border-slate-200 text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800/50'
                   )}
                 >
                   <div className="flex items-center gap-3">
@@ -322,7 +334,7 @@ export default function QuizBlock({ quiz }: Props) {
                       className={cn(
                         'flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-xs',
                         isSelected
-                          ? 'border-brand-600 bg-brand-600 text-white dark:border-brand-400 dark:bg-brand-500'
+                          ? 'border-brand-600 bg-brand-600 dark:border-brand-400 dark:bg-brand-500 text-white'
                           : 'border-current'
                       )}
                     >

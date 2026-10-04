@@ -147,8 +147,8 @@ export default function LessonPage() {
   if (errorStatus === 401)
     return (
       <div className="flex min-h-[60vh] flex-1 items-center justify-center p-6">
-        <div className="card max-w-md p-8 text-center space-y-4">
-          <div className="bg-amber-100 dark:bg-amber-900/30 mx-auto flex h-14 w-14 items-center justify-center rounded-2xl">
+        <div className="card max-w-md space-y-4 p-8 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 dark:bg-amber-900/30">
             <Zap className="h-7 w-7 text-amber-600 dark:text-amber-400" />
           </div>
           <h2 className="font-heading text-xl font-bold text-slate-900 dark:text-white">

@@ -78,10 +78,12 @@ router.get('/:lessonId', authenticate, async (req, res, next) => {
         type: q.type,
         order: q.order,
         options: Array.isArray(q.options)
-          ? (q.options as Array<{ id: string; text: string }>).map((opt: { id: string; text: string }) => ({
-              id: String(opt.id),
-              text: String(opt.text ?? ''),
-            }))
+          ? (q.options as Array<{ id: string; text: string }>).map(
+              (opt: { id: string; text: string }) => ({
+                id: String(opt.id),
+                text: String(opt.text ?? ''),
+              })
+            )
           : [],
       })),
     };
@@ -125,9 +127,15 @@ router.post('/:id/attempt', authenticate, validateBody(submitSchema), async (req
 
     // 3. Validasi questionId dan tolak selectedOptionId yang bukan milik soal
     for (const ans of answers) {
-      const question = quiz.questions.find((q: (typeof quiz.questions)[0]) => q.id === ans.questionId);
+      const question = quiz.questions.find(
+        (q: (typeof quiz.questions)[0]) => q.id === ans.questionId
+      );
       if (!question) {
-        throw new AppError(400, 'BAD_REQUEST', `Pertanyaan ${ans.questionId} tidak valid untuk kuis ini`);
+        throw new AppError(
+          400,
+          'BAD_REQUEST',
+          `Pertanyaan ${ans.questionId} tidak valid untuk kuis ini`
+        );
       }
       const options = question.options as Array<{ id: string; text: string; isCorrect: boolean }>;
       const optionExists = options.some((o) => o.id === ans.selectedOptionId);
@@ -150,7 +158,11 @@ router.post('/:id/attempt', authenticate, validateBody(submitSchema), async (req
       orderBy: { createdAt: 'desc' },
     });
     if (recentAttempt) {
-      throw new AppError(429, 'TOO_MANY_REQUESTS', 'Percobaan kuis sedang diproses. Mohon tunggu sejenak.');
+      throw new AppError(
+        429,
+        'TOO_MANY_REQUESTS',
+        'Percobaan kuis sedang diproses. Mohon tunggu sejenak.'
+      );
     }
 
     // 5. Grade answers di sisi server (mengabaikan skor/isCorrect dari klien)
