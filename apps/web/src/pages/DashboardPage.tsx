@@ -1,8 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Flame, Zap, BookOpen, Trophy, ArrowRight } from 'lucide-react';
+import { Flame, Zap, BookOpen, Trophy, ArrowRight, Bookmark, Trash2 } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import toast from 'react-hot-toast';
+import type { Bookmark as BookmarkType } from '@jscraft/types';
+import { apiGet, apiDel } from '@lib/api';
 import { useAuthStore } from '@store/authStore';
 import { useProgressStore } from '@store/progressStore';
 import { xpService, formatXP } from '@lib/xp';
@@ -43,10 +46,37 @@ const ACHIEVEMENTS = [
 export default function DashboardPage() {
   const { user } = useAuthStore();
   const { getCompletedCount, streak, syncFromServer } = useProgressStore();
+  const [bookmarks, setBookmarks] = useState<BookmarkType[]>([]);
+  const [loadingBookmarks, setLoadingBookmarks] = useState(true);
+
+  const fetchBookmarks = useCallback(async () => {
+    try {
+      setLoadingBookmarks(true);
+      const data = await apiGet<BookmarkType[]>('/bookmarks');
+      setBookmarks(data);
+    } catch {
+      // silent
+    } finally {
+      setLoadingBookmarks(false);
+    }
+  }, []);
 
   useEffect(() => {
     syncFromServer();
-  }, [syncFromServer]);
+    fetchBookmarks();
+  }, [syncFromServer, fetchBookmarks]);
+
+  const handleRemoveBookmark = async (e: React.MouseEvent, lessonId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await apiDel(`/bookmarks/${lessonId}`);
+      setBookmarks((prev) => prev.filter((b) => b.lessonId !== lessonId));
+      toast.success('Bookmark dihapus');
+    } catch {
+      toast.error('Gagal menghapus bookmark');
+    }
+  };
 
   if (!user) {
     return <PageSpinner />;
@@ -166,6 +196,63 @@ export default function DashboardPage() {
               🏆 Streak terpanjangmu:{' '}
               <strong className="text-slate-600 dark:text-slate-300">{streak.max} hari</strong>
             </p>
+          )}
+        </div>
+
+        {/* Bookmarks */}
+        <div className="card p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Bookmark className="h-5 w-5 text-amber-500" />
+              <h2 className="font-heading font-semibold text-slate-900 dark:text-white">
+                Pelajaran Disimpan
+              </h2>
+            </div>
+            <span className="text-xs text-slate-500 dark:text-slate-400">
+              {bookmarks.length} pelajaran
+            </span>
+          </div>
+
+          {loadingBookmarks ? (
+            <div className="py-6 text-center text-sm text-slate-400">Memuat bookmark...</div>
+          ) : bookmarks.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-slate-200 py-6 text-center dark:border-slate-800">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                Belum ada pelajaran yang disimpan.
+              </p>
+              <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                Klik tombol Bookmark pada halaman pelajaran untuk menyimpannya di sini.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {bookmarks.map((b) => (
+                <div
+                  key={b.lessonId}
+                  className="hover:border-brand-500 hover:shadow-card-sm dark:hover:border-brand-500 group relative flex items-center justify-between rounded-xl border border-slate-200 p-4 transition-all dark:border-slate-800"
+                >
+                  <Link
+                    to={`/courses/${b.lesson.course.slug}/lessons/${b.lesson.id}`}
+                    className="min-w-0 flex-1 pr-3"
+                  >
+                    <div className="text-2xs text-brand-600 dark:text-brand-400 font-semibold uppercase tracking-wider">
+                      {b.lesson.course.titleId || b.lesson.course.title}
+                    </div>
+                    <div className="group-hover:text-brand-600 dark:group-hover:text-brand-400 mt-1 truncate text-sm font-medium text-slate-900 dark:text-white">
+                      Hari {b.lesson.dayNumber}: {b.lesson.titleId || b.lesson.title}
+                    </div>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={(e) => handleRemoveBookmark(e, b.lessonId)}
+                    className="rounded p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+                    title="Hapus bookmark"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
           )}
         </div>
 

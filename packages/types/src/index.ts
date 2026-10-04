@@ -240,3 +240,29 @@ export interface AdminStats {
   totalLessonsCompleted: number;
   avgSessionMinutes: number;
 }
+
+// ── Notes & Bookmarks ─────────────────────────────────────────────────────────
+export interface Note {
+  id: string;
+  lessonId: string | null;
+  content: string;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+
+export interface Bookmark {
+  lessonId: string;
+  createdAt: string | Date;
+  lesson: {
+    id: string;
+    slug: string;
+    title: string;
+    titleId: string;
+    dayNumber: number;
+    course: {
+      slug: string;
+      title: string;
+      titleId: string;
+    };
+  };
+}

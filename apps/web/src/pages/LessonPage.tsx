@@ -9,11 +9,14 @@ import {
   BookOpen,
   Terminal,
   HelpCircle,
+  Bookmark,
+  FileText,
 } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import type { Lesson, ContentSection } from '@jscraft/types';
-import { apiGet, ApiClientError } from '@lib/api';
+import type { Lesson, ContentSection, Bookmark as BookmarkType } from '@jscraft/types';
+import { apiGet, apiPut, apiDel, ApiClientError } from '@lib/api';
+import { useAuthStore } from '@store/authStore';
 import { useProgressStore } from '@store/progressStore';
 import { useEditorStore } from '@store/editorStore';
 import { cn } from '@lib/utils';
@@ -22,8 +25,9 @@ import { Spinner } from '@components/ui/Spinner';
 import CodeEditor from '@components/editor/CodeEditor';
 import ConsoleOutput from '@components/editor/ConsoleOutput';
 import QuizBlock from '@components/lesson/QuizBlock';
+import NotesPanel from '@components/lesson/NotesPanel';
 
-type Tab = 'materi' | 'latihan' | 'kuis';
+type Tab = 'materi' | 'latihan' | 'kuis' | 'catatan';
 
 function ContentRenderer({ sections }: { sections: ContentSection[] }) {
   return (
@@ -93,6 +97,10 @@ export default function LessonPage() {
   const [showXP, setShowXP] = useState(false);
   const [earnedXP, setEarnedXP] = useState(0);
 
+  const { user } = useAuthStore();
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [togglingBookmark, setTogglingBookmark] = useState(false);
+
   const { getLessonStatus, completeLesson, startLesson } = useProgressStore();
   const { setCode, setStarterCode, runCode, isRunning, output, code } = useEditorStore();
 
@@ -118,6 +126,44 @@ export default function LessonPage() {
       })
       .finally(() => setLoading(false));
   }, [slug, lessonId, setStarterCode, startLesson]);
+
+  useEffect(() => {
+    if (!user || !lessonId) {
+      setIsBookmarked(false);
+      return;
+    }
+    apiGet<BookmarkType[]>('/bookmarks')
+      .then((bookmarks) => {
+        setIsBookmarked(bookmarks.some((b) => b.lessonId === lessonId));
+      })
+      .catch(() => {
+        // silent catch
+      });
+  }, [user, lessonId]);
+
+  const handleToggleBookmark = async () => {
+    if (!user) {
+      toast.error('Silakan masuk untuk menyimpan bookmark');
+      return;
+    }
+    if (!lessonId || togglingBookmark) return;
+    setTogglingBookmark(true);
+    try {
+      if (isBookmarked) {
+        await apiDel(`/bookmarks/${lessonId}`);
+        setIsBookmarked(false);
+        toast.success('Bookmark dihapus');
+      } else {
+        await apiPut(`/bookmarks/${lessonId}`);
+        setIsBookmarked(true);
+        toast.success('Pelajaran disimpan ke bookmark');
+      }
+    } catch {
+      toast.error('Gagal memperbarui bookmark');
+    } finally {
+      setTogglingBookmark(false);
+    }
+  };
 
   const isCompleted = lessonId ? getLessonStatus(lessonId) === 'COMPLETED' : false;
 
@@ -185,6 +231,7 @@ export default function LessonPage() {
     { id: 'materi', icon: <BookOpen className="h-4 w-4" />, label: 'Materi' },
     { id: 'latihan', icon: <Terminal className="h-4 w-4" />, label: 'Latihan' },
     { id: 'kuis', icon: <HelpCircle className="h-4 w-4" />, label: 'Kuis' },
+    { id: 'catatan', icon: <FileText className="h-4 w-4" />, label: 'Catatan' },
   ];
 
   return (
@@ -263,21 +310,38 @@ export default function LessonPage() {
                 {lesson.titleId}
               </span>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="tag">Hari {lesson.dayNumber}</span>
-              <span className="tag">
-                {lesson.type === 'THEORY'
-                  ? 'Teori'
-                  : lesson.type === 'PRACTICE'
-                    ? 'Praktik'
-                    : '🏗 Proyek'}
-              </span>
-              <span className="xp-badge">⚡ +{lesson.xpReward} XP</span>
-              {isCompleted && (
-                <span className="status-badge-completed">
-                  <CheckCircle className="h-3 w-3" /> Selesai
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="tag">Hari {lesson.dayNumber}</span>
+                <span className="tag">
+                  {lesson.type === 'THEORY'
+                    ? 'Teori'
+                    : lesson.type === 'PRACTICE'
+                      ? 'Praktik'
+                      : '🏗 Proyek'}
                 </span>
-              )}
+                <span className="xp-badge">⚡ +{lesson.xpReward} XP</span>
+                {isCompleted && (
+                  <span className="status-badge-completed">
+                    <CheckCircle className="h-3 w-3" /> Selesai
+                  </span>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={handleToggleBookmark}
+                disabled={togglingBookmark}
+                className={cn(
+                  'inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors',
+                  isBookmarked
+                    ? 'border-amber-400 bg-amber-50 text-amber-800 dark:border-amber-600/50 dark:bg-amber-950/30 dark:text-amber-300'
+                    : 'border-slate-200 text-slate-600 hover:bg-slate-100 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800'
+                )}
+                title={isBookmarked ? 'Hapus dari bookmark' : 'Simpan ke bookmark'}
+              >
+                <Bookmark className={cn('h-3.5 w-3.5', isBookmarked && 'fill-current')} />
+                <span>{isBookmarked ? 'Tersimpan' : 'Bookmark'}</span>
+              </button>
             </div>
           </div>
 
@@ -361,6 +425,8 @@ export default function LessonPage() {
                     Belum ada kuis untuk pelajaran ini.
                   </p>
                 ) : null}
+
+                {activeTab === 'catatan' && <NotesPanel lessonId={lesson.id} />}
               </motion.div>
             </AnimatePresence>
           </div>
