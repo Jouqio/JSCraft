@@ -3,8 +3,13 @@ import express from 'file:///C:/Users/ADVAN/OneDrive/Dokumen/jscraft/node_module
 import http from 'node:http';
 import jwt from 'file:///C:/Users/ADVAN/OneDrive/Dokumen/jscraft/node_modules/jsonwebtoken/index.js';
 
-// Enforce test database requirement
-const dbUrl = process.env.DATABASE_URL || 'postgresql://postgres:Postgres%40123@127.0.0.1:5432/jscraft_test?schema=public';
+// Enforce test database requirement without hardcoded credentials
+const dbUrl = process.env.DATABASE_URL;
+
+if (!dbUrl) {
+  console.error("FATAL: Variabel lingkungan DATABASE_URL belum disetel. Jalankan dengan DATABASE_URL yang berakhiran '_test'.");
+  process.exit(1);
+}
 
 // Extract database name from connection string
 const dbNameMatch = dbUrl.match(/\/([^/?]+)(\?|$)/);
@@ -14,8 +19,6 @@ if (!dbName.endsWith('_test')) {
   console.error(`FATAL: Script ini HANYA boleh dijalankan pada database pengujian yang berakhiran '_test'. Database saat ini: '${dbName}'`);
   process.exit(1);
 }
-
-process.env.DATABASE_URL = dbUrl;
 process.env.ENABLE_CODE_RUNNER = 'true';
 
 const prisma = new PrismaClient({ datasources: { db: { url: dbUrl } } });
