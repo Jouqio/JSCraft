@@ -1,3 +1,4 @@
+import type { Prisma } from '@prisma/client';
 import { prisma } from '../config/database.js';
 
 export const XP_REWARDS = {
@@ -29,8 +30,13 @@ export function levelFromXP(totalXP: number): {
 }
 
 export const xpService = {
-  async awardXP(userId: string, amount: number): Promise<{ newTotal: number; newLevel: number }> {
-    const user = await prisma.user.update({
+  async awardXP(
+    userId: string,
+    amount: number,
+    tx?: Prisma.TransactionClient
+  ): Promise<{ newTotal: number; newLevel: number }> {
+    const client = tx ?? prisma;
+    const user = await client.user.update({
       where: { id: userId },
       data: { xpTotal: { increment: amount } },
       select: { xpTotal: true },
@@ -39,7 +45,7 @@ export const xpService = {
     const { level } = levelFromXP(user.xpTotal);
 
     // Update level if changed
-    await prisma.user.update({
+    await client.user.update({
       where: { id: userId },
       data: { level },
     });

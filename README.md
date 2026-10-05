@@ -104,6 +104,7 @@ Edit `apps/api/.env` dan isi nilai berikut:
 DATABASE_URL=postgresql://user:password@localhost:5432/jscraft
 JWT_ACCESS_SECRET=<generated-secret>
 JWT_REFRESH_SECRET=<generated-secret>
+ENABLE_CODE_RUNNER=false  # default false; node:vm bukan batas isolasi aman
 ```
 
 ### 3. Generate JWT Secrets
@@ -324,7 +325,7 @@ VITE_API_URL=https://api.jscraft.dev/v1
 - **Passwords** — bcrypt (cost 12)
 - **JWT** — opaque refresh token in httpOnly cookie; signed access token (15 min)
 - **Refresh rotation** — setiap penggunaan menghasilkan token pair baru
-- **Code execution** — iframe sandbox (`allow-scripts` only, no DOM access)
+- **Code execution** — iframe sandbox di sisi browser (`allow-scripts` only, no DOM access); runner server dinonaktifkan secara bawaan (`ENABLE_CODE_RUNNER=false`) demi keamanan
 - **Rate limiting**
   - Global: 100 req/15 min per IP (kecuali `/health`)
   - Login: dual limiter (`skipSuccessfulRequests: true`) — 10 gagal/15 min per IP+email dan 200 gagal/15 min per IP

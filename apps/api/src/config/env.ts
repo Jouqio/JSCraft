@@ -30,6 +30,12 @@ const envSchema = z
       .enum(['true', 'false'])
       .default('true')
       .transform((v) => v === 'true'),
+    // Server-side exercise runner (node:vm in the API process). Default OFF:
+    // node:vm is not a security boundary. Enable only in trusted local environments.
+    ENABLE_CODE_RUNNER: z
+      .enum(['true', 'false'])
+      .default('false')
+      .transform((v) => v === 'true'),
     TRUST_PROXY: z.string().default('false'),
     ALLOWED_ORIGINS: z.string().optional(),
     REFRESH_TOKEN_GRACE_SECONDS: z.coerce.number().default(15),

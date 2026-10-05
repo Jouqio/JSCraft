@@ -27,6 +27,8 @@ export default function ExerciseBlock({ exercise }: ExerciseBlockProps) {
   const [submitting, setSubmitting] = useState(false);
   const [submitResult, setSubmitResult] = useState<ExerciseSubmitResponse | null>(null);
   const [showHints, setShowHints] = useState(false);
+  // Set once the server reports the runner is disabled; we do not retry automatically.
+  const [runnerDisabled, setRunnerDisabled] = useState(false);
 
   const handleLoadStarter = () => {
     if (exercise.starterCode) {
@@ -63,7 +65,14 @@ export default function ExerciseBlock({ exercise }: ExerciseBlockProps) {
         toast.error(`${res.passedTests} dari ${res.totalTests} pengujian berhasil`);
       }
     } catch (err) {
-      if (err instanceof ApiClientError) {
+      if (
+        err instanceof ApiClientError &&
+        err.status === 503 &&
+        err.code === 'CODE_RUNNER_DISABLED'
+      ) {
+        setRunnerDisabled(true);
+        setSubmitResult(null);
+      } else if (err instanceof ApiClientError) {
         toast.error(err.message);
       } else {
         toast.error('Gagal menjalankan pengujian latihan');
@@ -135,14 +144,29 @@ export default function ExerciseBlock({ exercise }: ExerciseBlockProps) {
           Tuliskan solusi Anda di panel editor sebelah kanan, lalu klik periksa.
         </p>
         <Button
+          id={`exercise-submit-${exercise.id}`}
           onClick={handleSubmit}
           loading={submitting}
-          disabled={submitting}
+          disabled={submitting || runnerDisabled}
           leftIcon={<Play className="h-4 w-4" />}
         >
           Periksa Jawaban
         </Button>
       </div>
+
+      {runnerDisabled && (
+        <div
+          role="status"
+          id={`exercise-runner-disabled-${exercise.id}`}
+          className="rounded-lg border border-slate-200 bg-slate-50 p-3.5 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
+        >
+          <p className="font-semibold">Eksekusi di server dinonaktifkan</p>
+          <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
+            Pemeriksaan otomatis latihan sedang dimatikan. Anda tetap dapat menulis dan menjalankan
+            kode di editor; XP latihan belum dapat diberikan untuk sementara.
+          </p>
+        </div>
+      )}
 
       {/* Test Case Evaluation Results */}
       {submitResult && (
