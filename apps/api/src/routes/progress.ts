@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { authenticate } from '../middleware/auth.js';
 import { progressService } from '../services/progressService.js';
 import { streakService } from '../services/streakService.js';
-import { AppError } from '../middleware/errorHandler.js';
 
 const router = Router();
 
