@@ -65,7 +65,11 @@ export default function ExerciseBlock({ exercise }: ExerciseBlockProps) {
         toast.error(`${res.passedTests} dari ${res.totalTests} pengujian berhasil`);
       }
     } catch (err) {
-      if (err instanceof ApiClientError && err.status === 503 && err.code === 'CODE_RUNNER_DISABLED') {
+      if (
+        err instanceof ApiClientError &&
+        err.status === 503 &&
+        err.code === 'CODE_RUNNER_DISABLED'
+      ) {
         setRunnerDisabled(true);
         setSubmitResult(null);
       } else if (err instanceof ApiClientError) {
