@@ -83,7 +83,7 @@ jobs:
 
       - name: Verify schema matches migrations
         run: |
-          DATABASE_URL="postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/jscraft_test?schema=public" npx prisma migrate diff --from-migrations apps/api/prisma/migrations --to-schema-datamodel apps/api/prisma/schema.prisma --shadow-database-url "postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/jscraft_shadow?schema=public" --exit-code
+          DATABASE_URL="postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/jscraft_test?schema=public" npx prisma migrate diff --from-schema-datasource apps/api/prisma/schema.prisma --to-schema-datamodel apps/api/prisma/schema.prisma --exit-code
         env:
           DB_USER: postgres
           DB_PASSWORD: ci_password
