@@ -135,7 +135,9 @@ export function runExerciseCode(userCode: string, testCases: TestCase[]): RunRes
       });
 
       actualOutput = capturedLogs.join('\n').trim();
-      allOutputs.push(...capturedLogs);
+      if (!isHidden) {
+        allOutputs.push(...capturedLogs);
+      }
 
       const expected = String(tc.expectedOutput).trim();
 

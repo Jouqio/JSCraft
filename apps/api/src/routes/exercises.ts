@@ -1,6 +1,7 @@
-import { Router } from 'express';
+import { Router, type Request, type Response, type NextFunction } from 'express';
 import { z } from 'zod';
 import { prisma } from '../config/database.js';
+import { env } from '../config/env.js';
 import { authenticate } from '../middleware/auth.js';
 import { validateBody } from '../middleware/validate.js';
 import { xpService } from '../services/xpService.js';
@@ -50,10 +51,25 @@ router.get('/:lessonId', async (req, res, next) => {
   }
 });
 
+// Guard: server-side execution is disabled unless ENABLE_CODE_RUNNER=true.
+function requireCodeRunner(_req: Request, _res: Response, next: NextFunction) {
+  if (!env.ENABLE_CODE_RUNNER) {
+    return next(
+      new AppError(
+        503,
+        'CODE_RUNNER_DISABLED',
+        'Eksekusi di server dinonaktifkan. Latihan belum dapat diperiksa untuk sementara.'
+      )
+    );
+  }
+  next();
+}
+
 // POST /v1/exercises/:id/submit
 router.post(
   '/:id/submit',
   authenticate,
+  requireCodeRunner,
   validateBody(z.object({ code: z.string().max(10000) })),
   async (req, res, next) => {
     try {
@@ -72,15 +88,30 @@ router.post(
       // Execute code against test cases in isolated sandbox
       const runResult = runExerciseCode(code, rawTestCases);
 
-      // Check if user has already passed this exercise before (XP idempotency)
-      const previousPassed = await prisma.exerciseAttempt.findFirst({
-        where: { userId, exerciseId: exercise.id, passed: true },
-      });
-
       let xpEarned = 0;
-      if (runResult.passed && !previousPassed) {
-        xpEarned = exercise.xpReward;
-        await xpService.awardXP(userId, xpEarned);
+      if (runResult.passed) {
+        try {
+          xpEarned = await prisma.$transaction(async (tx) => {
+            // 1. Sisipkan penyelesaian ke tabel berkonstrain unik (userId, exerciseId)
+            await tx.exerciseCompletion.create({
+              data: {
+                userId,
+                exerciseId: exercise.id,
+                xpEarned: exercise.xpReward,
+              },
+            });
+            // 2. Hanya jika berhasil tanpa pelanggaran unik (P2002), tambahkan XP secara atomik
+            await xpService.awardXP(userId, exercise.xpReward, tx);
+            return exercise.xpReward;
+          });
+        } catch (err: any) {
+          if (err?.code === 'P2002') {
+            // Sudah pernah lulus exercise ini sebelumnya; idempotensi terjamin
+            xpEarned = 0;
+          } else {
+            throw err;
+          }
+        }
       }
 
       await prisma.exerciseAttempt.create({
