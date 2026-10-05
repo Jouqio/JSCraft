@@ -2,7 +2,7 @@ import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 
 // Regex pattern: matches standard URI schemes containing embedded username and password
-// e.g., postgresql://username:password@host:port/db
+// e.g., postgresql://<username>:<password>@host:port/db
 // Captures scheme and password segment
 export const CONNECTION_STRING_WITH_PASSWORD_REGEX =
   /(?:postgres(?:ql)?|mysql|mariadb|mongodb(?:\+srv)?|redis|amqp[s]?):\/\/[^\s:@'"]+:([^\s:@'"]+)@[^\s/'"]+/gi;
@@ -12,6 +12,7 @@ const IGNORED_FILES = new Set([
   'apps/api/.env.example',
   'apps/web/.env.example',
   '.env.example',
+  'scripts/check_no_credentials.mjs',
 ]);
 
 const BINARY_EXTENSIONS = new Set([

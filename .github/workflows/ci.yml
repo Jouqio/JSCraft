@@ -40,6 +40,9 @@ jobs:
       - name: Credential leak check
         run: node scripts/check_no_credentials.mjs
 
+      - name: Dependency security audit
+        run: npm audit --omit=dev --audit-level=high
+
   # ── Database Migration Check ─────────────────────────────
   migration-check:
     name: Database Migration Check
