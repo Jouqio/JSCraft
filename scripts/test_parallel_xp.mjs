@@ -24,9 +24,9 @@ process.env.ENABLE_CODE_RUNNER = 'true';
 const prisma = new PrismaClient({ datasources: { db: { url: dbUrl } } });
 
 // Dynamically import routes after environment is configured
-const { default: exercisesRouter } = await import('../apps/api/src/routes/exercises.js');
-const { errorHandler } = await import('../apps/api/src/middleware/errorHandler.js');
-const { env } = await import('../apps/api/src/config/env.js');
+const { default: exercisesRouter } = await import('../apps/api/dist/routes/exercises.js');
+const { errorHandler } = await import('../apps/api/dist/middleware/errorHandler.js');
+const { env } = await import('../apps/api/dist/config/env.js');
 
 const app = express();
 app.use(express.json());
@@ -92,10 +92,28 @@ try {
     { algorithm: 'HS256', expiresIn: '1h', issuer: 'jscraft-api', audience: 'jscraft-app' }
   );
 
+  const apiBase = process.env.API_BASE_URL || 'http://127.0.0.1:3359';
+
+  // Verifikasi bahwa API yang diuji membaca dari database _test yang sama
+  const probeResponse = await fetch(`${apiBase}/v1/exercises/${exercise.lessonId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!probeResponse.ok) {
+    throw new Error(`FATAL: Gagal melakukan probe ke API (${probeResponse.status}).`);
+  }
+  const probeData = await probeResponse.json();
+  const foundInApi = probeData.data?.some((e) => e.id === exercise.id);
+  if (!foundInApi) {
+    throw new Error(
+      `FATAL: API yang diuji tidak melihat latihan yang baru dibuat di database '${dbName}'. API dan skrip wajib mengarah ke database _test yang sama.`
+    );
+  }
+  console.log(`Verifikasi database: API terbukti terhubung ke database '${dbName}' yang sama.`);
+
   console.log(`Menjalankan 10 permintaan HTTP submit latihan paralel untuk user ${user.id} dan exercise ${exercise.id}...`);
 
   const requests = Array.from({ length: 10 }, (_, i) =>
-    fetch(`http://127.0.0.1:3359/v1/exercises/${exercise.id}/submit`, {
+    fetch(`${apiBase}/v1/exercises/${exercise.id}/submit`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
