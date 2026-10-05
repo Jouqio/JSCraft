@@ -7,6 +7,7 @@ import { validateBody } from '../middleware/validate.js';
 import { xpService } from '../services/xpService.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { runExerciseCode, type TestCase } from '../services/codeRunner.js';
+import type { Prisma } from '@prisma/client';
 
 const router = Router();
 
@@ -91,7 +92,7 @@ router.post(
       let xpEarned = 0;
       if (runResult.passed) {
         try {
-          xpEarned = await prisma.$transaction(async (tx) => {
+          xpEarned = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
             // 1. Sisipkan penyelesaian ke tabel berkonstrain unik (userId, exerciseId)
             await tx.exerciseCompletion.create({
               data: {
