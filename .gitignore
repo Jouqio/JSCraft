@@ -57,3 +57,6 @@ coverage/
 
 # AI Agent customizations
 .agents/
+
+# Local tools
+.tools/

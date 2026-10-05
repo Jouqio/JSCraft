@@ -101,7 +101,7 @@ cp apps/web/.env.example apps/web/.env
 Edit `apps/api/.env` dan isi nilai berikut:
 
 ```env
-DATABASE_URL=postgresql://user:password@localhost:5432/jscraft
+DATABASE_URL=postgresql://<username>:<password>@localhost:5432/jscraft
 JWT_ACCESS_SECRET=<generated-secret>
 JWT_REFRESH_SECRET=<generated-secret>
 ENABLE_CODE_RUNNER=false  # default false; node:vm bukan batas isolasi aman
